@@ -53,6 +53,22 @@ function serviceIcon(name = '') {
   return Sparkles
 }
 
+// "Servicios" (qué ofrece Felipe, por audiencia) y "Tipo de sesión" del
+// wizard de reserva (por qué reservas hoy: primera vez, seguimiento, para
+// tu hijo/a, orientación a padres) son taxonomías distintas a propósito —
+// el wizard necesita distinguir paciente nuevo/antiguo, algo que un menú de
+// servicios no necesita. Pero cuando SÍ hay una correspondencia clara, cada
+// card debe llevar directo a esa opción ya elegida en vez de dejar que el
+// visitante la busque de nuevo — mismo mecanismo de match por palabra clave
+// que serviceIcon(), IDs deben calzar con SESSION_TYPES en bookingWizard.js.
+function serviceSessionTypeId(name = '') {
+  const key = name.toLowerCase()
+  if (key.includes('infanto') || key.includes('niñ') || key.includes('adolescen')) return 'consulta-hijo'
+  if (key.includes('padre') || key.includes('orientaci') || key.includes('crianza')) return 'orientacion-padres'
+  if (key.includes('adulto')) return 'primera-consulta'
+  return null
+}
+
 // Titular del hero, palabra por palabra, con reveal en cascada (fade + y)
 // al montar. Peso 600 real (no 500): una serif variable en peso medio a
 // tamaño display se ve blanda — el contraste de peso es lo que lee como
@@ -631,11 +647,14 @@ export default function Landing() {
         >
           {services.map((service, i) => {
             const Icon = serviceIcon(service.name)
+            const sessionTypeId = serviceSessionTypeId(service.name)
+            const reserveState = sessionTypeId ? { sessionTypeId } : undefined
             if (i === 0) {
               return (
                 <motion.div key={i} variants={staggerItem} className="lg:col-span-7">
                   <Link
                     to="/reservar"
+                    state={reserveState}
                     className="group relative flex h-full min-h-[22rem] flex-col justify-end overflow-hidden rounded-2xl bg-primary-800 border border-white/10 shadow-lifted p-8 sm:p-10 transition-transform duration-300 hover:-translate-y-1"
                   >
                     <GrainOverlay opacity={0.05} blend="overlay" />
@@ -667,18 +686,24 @@ export default function Landing() {
                   whileHover={{ y: -6, scale: 1.015, rotate: i % 2 === 0 ? -0.4 : 0.4 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                 >
-                  <GlowCard className="h-full border-transparent hover:border-primary-200 transition-colors duration-300">
-                    <CardContent className="p-7 h-full flex flex-col">
-                      <div
-                        className="h-12 w-12 flex items-center justify-center text-primary-700 bg-primary-50 mb-5"
-                        style={{ borderRadius: '46% 54% 58% 42% / 50% 44% 56% 50%' }}
-                      >
-                        <Icon size={22} strokeWidth={1.75} />
-                      </div>
-                      <h3 className="font-display text-xl font-medium text-stone-900 mb-2">{service.name}</h3>
-                      <p className="text-stone-600 text-sm leading-relaxed">{service.description}</p>
-                    </CardContent>
-                  </GlowCard>
+                  <Link to="/reservar" state={reserveState} className="group block h-full">
+                    <GlowCard className="h-full border-transparent hover:border-primary-200 transition-colors duration-300">
+                      <CardContent className="p-7 h-full flex flex-col">
+                        <div
+                          className="h-12 w-12 flex items-center justify-center text-primary-700 bg-primary-50 mb-5"
+                          style={{ borderRadius: '46% 54% 58% 42% / 50% 44% 56% 50%' }}
+                        >
+                          <Icon size={22} strokeWidth={1.75} />
+                        </div>
+                        <h3 className="font-display text-xl font-medium text-stone-900 mb-2">{service.name}</h3>
+                        <p className="text-stone-600 text-sm leading-relaxed mb-4">{service.description}</p>
+                        <span className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700">
+                          Reservar hora
+                          <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
+                        </span>
+                      </CardContent>
+                    </GlowCard>
+                  </Link>
                 </motion.div>
               </motion.div>
             )
