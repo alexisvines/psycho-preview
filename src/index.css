@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply box-border;
+}
+
+/* Lenis maneja el smooth scroll; el nativo duplicaría el suavizado */
+html.lenis {
+  scroll-behavior: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.lenis) {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  @apply bg-stone-50 text-stone-900;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+button {
+  @apply transition-colors;
+}
+
+button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+::selection {
+  @apply bg-primary-100 text-primary-900;
+}
+
+:focus-visible {
+  @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(120, 113, 108);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(100, 93, 88);
+}
+
+/* FullCalendar customization */
+.fc {
+  font-family: 'Inter', system-ui, sans-serif;
+  --fc-border-color: #e7e5e4;
+  --fc-page-bg-color: #ffffff;
+  --fc-neutral-bg-color: #fafaf9;
+  --fc-today-bg-color: #f6f7f1;
+  --fc-now-indicator-color: var(--color-primary-500, #6b7f5e);
+  --fc-event-border-color: transparent;
+}
+
+/* Time grid label styling */
+.fc .fc-timegrid-slot-label {
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+  color: #78716c;
+  font-size: 0.875rem;
+}
+
+/* Event styling for custom render */
+.fc .fc-event {
+  cursor: pointer;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: box-shadow 0.15s ease-out, transform 0.15s ease-out;
+}
+
+.fc .fc-event:hover {
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
+  transform: translateY(-1px);
+}
+
+.fc .fc-event-title {
+  font-weight: 600;
+}
+
+/* El contenido custom de eventContent (WeekCalendar.jsx) usa position:absolute;
+   inset:0 para llenar la caja del evento sin depender de una cadena de alturas
+   explícitas — esto asegura que .fc-event-main sea el ancestro posicionado
+   más cercano y por lo tanto donde se ancla ese inset-0. */
+.fc .fc-event-main {
+  position: relative;
+  height: 100%;
+}
+
+/* Estética más cercana a Google Calendar: header de días más limpio */
+.fc .fc-col-header-cell {
+  border-bottom: 1px solid #e7e5e4;
+  padding: 0.5rem 0;
+}
+
+.fc .fc-timegrid-slot {
+  height: 2.75rem;
+}
+
+/* Now indicator styling */
+.fc .fc-now-indicator-line {
+  border-color: var(--fc-now-indicator-color);
+}
+
+.fc .fc-now-indicator-arrow {
+  border-color: var(--fc-now-indicator-color);
+}

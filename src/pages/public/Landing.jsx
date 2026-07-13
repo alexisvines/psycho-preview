@@ -1,0 +1,720 @@
+import { useEffect, useRef } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { Link, useLocation } from 'react-router-dom'
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import {
+  CalendarCheck,
+  ArrowRight,
+  ArrowDown,
+  Mail,
+  Phone,
+  Clock3,
+  MapPin,
+  Baby,
+  UserRound,
+  HeartHandshake,
+  Sparkles,
+  GraduationCap,
+  BadgeCheck,
+  Star,
+  ScrollText,
+  Award,
+} from 'lucide-react'
+import felipePortrait from '@/assets/felipe.jpg'
+import felipeSobre from '@/assets/felipe-sobre.jpg'
+import espacio1 from '@/assets/espacio-1.jpg'
+import espacio2 from '@/assets/espacio-2.jpg'
+import { publicAPI } from '@/api/endpoints'
+import { PUBLIC_CONTENT_QUERY_KEY, mergeContentBlocks } from './fallbacks'
+import TestimonialsMarquee from './components/TestimonialsMarquee'
+import EvidenceSection from './components/EvidenceSection'
+import ApproachSection from './components/ApproachSection'
+import { SectionHeading } from './components/SectionHeading'
+import { Button } from '@/components/ui/Button'
+import { CardContent } from '@/components/ui/Card'
+import { GlowCard } from '@/components/ui/GlowCard'
+import { BentoGrid, BentoCard } from '@/components/ui/BentoGrid'
+import { MeshGradient } from '@/components/ui/MeshGradient'
+import { GrainOverlay } from '@/components/ui/GrainOverlay'
+import {
+  staggerContainer,
+  staggerItem,
+  wordRevealContainer,
+  wordRevealItem,
+  sectionReveal,
+} from '@/lib/motion'
+
+// Icono por servicio: matching simple por palabra clave en el nombre del
+// bloque CMS, con un ícono genérico de respaldo si no calza ninguno (copy
+// editable desde el admin, no queremos que un nombre nuevo rompa el ícono).
+function serviceIcon(name = '') {
+  const key = name.toLowerCase()
+  if (key.includes('infanto') || key.includes('niñ') || key.includes('adolescen')) return Baby
+  if (key.includes('padre') || key.includes('orientaci') || key.includes('crianza')) return HeartHandshake
+  if (key.includes('adulto')) return UserRound
+  return Sparkles
+}
+
+// Titular del hero, palabra por palabra, con reveal en cascada (fade + y +
+// blur) al montar. La última palabra queda envuelta en un <span> con un
+// leve juego de font-variation-settings (peso) al hover, como guiño a que
+// Fraunces es una variable font — sutil, no distrae del contenido.
+function HeroHeadline({ text }) {
+  const shouldReduceMotion = useReducedMotion()
+  const words = text.split(' ')
+
+  return (
+    <motion.h1
+      className="font-display text-5xl sm:text-6xl lg:text-7xl font-medium text-stone-900 leading-[1.05] tracking-tight"
+      variants={wordRevealContainer(shouldReduceMotion)}
+      initial="initial"
+      animate="animate"
+    >
+      {words.map((word, i) => {
+        const isLast = i === words.length - 1
+        return (
+          <motion.span
+            key={i}
+            variants={wordRevealItem(shouldReduceMotion)}
+            className="inline-block mr-[0.28em]"
+          >
+            {isLast ? (
+              <motion.span
+                className="inline-block text-primary-700"
+                whileHover={shouldReduceMotion ? undefined : { fontVariationSettings: '"wght" 560' }}
+                style={{ fontVariationSettings: '"wght" 500' }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+              >
+                {word}
+              </motion.span>
+            ) : (
+              word
+            )}
+          </motion.span>
+        )
+      })}
+    </motion.h1>
+  )
+}
+
+// Credenciales verificables (Doctoralia + Google), mostradas en la trust
+// bar bajo el hero — el detalle que convierte "sitio bonito" en "profesional
+// real". Copy fijo (no viene del CMS): son datos verificables, no editoriales.
+const CREDENTIALS = [
+  { icon: GraduationCap, label: 'Magíster UDP en Clínica Psicoanalítica' },
+  { icon: BadgeCheck, label: 'Colegiado N° 63345' },
+  { icon: HeartHandshake, label: '15+ años de experiencia' },
+  { icon: Star, label: '★ 5,0 en Google (44 reseñas)' },
+]
+
+// Formación académica, en orden cronológico, para la mini-línea de tiempo
+// en la sección "Sobre mí".
+// Iconos académicos genéricos (no logos de universidades: son marcas
+// registradas y usarlas sin permiso no es buena práctica).
+const EDUCATION = [
+  { year: '2010', icon: GraduationCap, label: 'Psicólogo, Universidad Nacional Andrés Bello' },
+  { year: '2017', icon: ScrollText, label: 'Postítulo en Clínica Psicoanalítica de Adultos, Universidad Diego Portales' },
+  { year: '2018', icon: Award, label: 'Magíster en Psicología, mención Teoría y Clínica Psicoanalítica, Universidad Diego Portales' },
+]
+
+// Motivos de consulta frecuentes: chips informativos (no clickeables) que
+// dan una idea rápida de cobertura clínica sin sustituir el copy editorial.
+const CONSULT_REASONS = [
+  'Ansiedad',
+  'Depresión',
+  'Estrés',
+  'Trastornos del ánimo',
+  'Angustia',
+  'Dificultades adolescentes',
+  'TEA / Asperger',
+  'Control de impulsos',
+]
+
+// Franja de credenciales verificables bajo el hero: sobria, tipografía
+// pequeña con tracking amplio (registro "sello institucional", no marketing).
+function TrustBar() {
+  return (
+    <motion.section
+      className="border-b border-stone-200/70 bg-stone-50/60"
+      {...sectionReveal}
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-7">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-5">
+          {CREDENTIALS.map(({ icon: Icon, label }, i) => (
+            <div key={i} className="flex items-center gap-2.5 min-w-0">
+              <Icon size={17} className="text-primary-600 shrink-0" strokeWidth={1.5} />
+              <span className="text-[0.7rem] sm:text-xs font-medium uppercase tracking-[0.08em] text-stone-500 leading-tight">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.section>
+  )
+}
+
+// Icono por línea de contacto: matching por palabra clave (misma idea que
+// serviceIcon) en vez de un array posicional, para que el ícono no se
+// desalinee si el copy CMS cambia el orden de las líneas.
+function contactIcon(line = '') {
+  const key = line.toLowerCase()
+  if (key.startsWith('dirección') || key.startsWith('direccion')) return MapPin
+  if (key.startsWith('teléfono') || key.startsWith('telefono')) return Phone
+  if (key.startsWith('horario') || key.startsWith('atención') || key.startsWith('atencion')) return Clock3
+  if (key.startsWith('email') || key.startsWith('correo')) return Mail
+  return CalendarCheck
+}
+
+// Paso de "cómo funciona": número gigante en Fraunces, semi-recortado detrás
+// del texto (broken grid), que se "enciende" (opacidad + color) a medida que
+// el paso cruza el centro del viewport durante el scroll. Cada paso mide su
+// propio progreso de scroll (en vez de derivarlo del contenedor entero) para
+// que el efecto de encendido sea preciso por elemento.
+function HowItWorksStep({ index, text }) {
+  const ref = useRef(null)
+  const shouldReduceMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start 0.8', 'start 0.35'],
+  })
+  // Piso de opacidad alto (0.55) y arranque en gris-tinta: el "encendido"
+  // por scroll es un matiz, nunca debe dejar un paso ilegible.
+  const opacity = useTransform(scrollYProgress, [0, 1], [0.55, 1])
+  const textColor = useTransform(scrollYProgress, [0, 1], ['#57534e', '#4a5d42'])
+  const dotScale = useTransform(scrollYProgress, [0, 1], [0.6, 1])
+  const numberOpacity = useTransform(scrollYProgress, [0, 1], [0.25, 0.6])
+
+  return (
+    // Número y texto en flujo flex (nada absoluto ni negativo): cada fila
+    // contiene su propio número, así que los números no pueden superponerse
+    // entre pasos a ningún ancho de pantalla.
+    <div ref={ref} className="relative flex items-center gap-8 sm:gap-12 py-7 sm:py-8">
+      {/* Número gigante como marca de agua, alineado contra el riel */}
+      <motion.span
+        aria-hidden="true"
+        className="w-20 sm:w-36 shrink-0 text-right select-none font-display text-[3.5rem] sm:text-[5.5rem] font-medium text-primary-300 leading-none"
+        style={{ opacity: shouldReduceMotion ? 0.45 : numberOpacity }}
+      >
+        {String(index + 1).padStart(2, '0')}
+      </motion.span>
+      {/* Punto sobre la línea vertical, centrado con el paso */}
+      <motion.span
+        aria-hidden="true"
+        className="absolute left-24 sm:left-[10.5rem] top-1/2 h-2.5 w-2.5 rounded-full bg-primary-600 -translate-x-1/2 -translate-y-1/2"
+        style={shouldReduceMotion ? undefined : { scale: dotScale }}
+      />
+      <motion.p
+        className="flex-1 text-lg sm:text-xl text-stone-700 leading-relaxed"
+        style={shouldReduceMotion ? undefined : { opacity, color: textColor }}
+      >
+        {text}
+      </motion.p>
+    </div>
+  )
+}
+
+// Sección completa de "cómo funciona": la línea vertical de fondo se dibuja
+// (scaleY 0 → 1, origen arriba) según el progreso de scroll del bloque de
+// pasos completo, mientras cada HowItWorksStep enciende su propio texto de
+// forma independiente. Con prefers-reduced-motion todo queda visible y
+// estático (línea completa, sin encendido progresivo).
+function HowItWorksSection({ title, steps }) {
+  const containerRef = useRef(null)
+  const shouldReduceMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start 0.75', 'end 0.4'],
+  })
+  const lineScaleY = useTransform(scrollYProgress, [0, 1], [0, 1])
+
+  return (
+    <motion.section
+      id="como-funciona"
+      className="bg-primary-50/60 border-y border-primary-100 scroll-mt-20"
+      {...sectionReveal}
+    >
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
+        <div className="mb-16">
+          <SectionHeading label="Proceso" align="center">{title}</SectionHeading>
+        </div>
+        <div ref={containerRef} className="relative">
+          {/* Riel de la línea (siempre visible, tenue), entre número y texto */}
+          <div
+            aria-hidden="true"
+            className="absolute left-24 sm:left-[10.5rem] top-2 bottom-2 w-px bg-primary-200"
+          />
+          {/* Línea "dibujada" por el scroll */}
+          <motion.div
+            aria-hidden="true"
+            className="absolute left-24 sm:left-[10.5rem] top-2 bottom-2 w-px bg-primary-600 origin-top"
+            style={shouldReduceMotion ? { scaleY: 1 } : { scaleY: lineScaleY }}
+          />
+          <div className="relative">
+            {steps.map((step, i) => (
+              <HowItWorksStep key={i} index={i} text={step} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.section>
+  )
+}
+
+// "El espacio": dos fotos del consultorio en composición asimétrica editorial
+// (una más grande, offsets verticales), con un parallax muy sutil sobre la
+// foto grande atado al scroll de la sección. Copy corto, sin depender del
+// CMS (es texto ambiental, no editable desde el admin).
+function ElEspacio() {
+  const ref = useRef(null)
+  const shouldReduceMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [-24, 24])
+
+  return (
+    <motion.section
+      ref={ref}
+      className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-24"
+      {...sectionReveal}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+        <div className="lg:col-span-5 order-2 lg:order-1">
+          <SectionHeading label="El espacio" className="mb-4">
+            El espacio
+          </SectionHeading>
+          <p className="text-base text-stone-700 leading-relaxed max-w-sm">
+            Una consulta privada y tranquila, con luz natural. Sin salas de
+            espera compartidas ni interrupciones: solo un espacio cómodo para
+            conversar con calma y en total confidencialidad.
+          </p>
+          <p className="mt-4 text-sm text-stone-500 max-w-sm">
+            Lautaro 1775, San Antonio.
+          </p>
+        </div>
+
+        <div className="lg:col-span-7 order-1 lg:order-2 relative grid grid-cols-5 gap-4 sm:gap-5">
+          <motion.div
+            className="col-span-3 relative"
+            style={shouldReduceMotion ? undefined : { y: parallaxY }}
+          >
+            <div className="group relative rounded-2xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(38,72,60,0.35)] transition-shadow duration-500 hover:shadow-[0_22px_60px_-12px_rgba(38,72,60,0.45)]">
+              <img
+                src={espacio1}
+                alt="Diván y sillón de la consulta de Felipe Caro, con luz cálida y plantas"
+                width={1400}
+                height={1050}
+                loading="lazy"
+                className="w-full aspect-[4/3] object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-105"
+                style={{ filter: 'saturate(0.8) sepia(0.15)' }}
+              />
+              {/* Tint arena muy leve, unifica el amarillo saturado de las
+                  paredes reales con la paleta cálida del sitio. */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 mix-blend-multiply pointer-events-none"
+                style={{ background: '#d9c9a8', opacity: 0.1 }}
+              />
+            </div>
+          </motion.div>
+          <div className="col-span-2 relative mt-10 sm:mt-16">
+            <div className="group relative rounded-2xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(38,72,60,0.35)] transition-shadow duration-500 hover:shadow-[0_22px_60px_-12px_rgba(38,72,60,0.45)]">
+              <img
+                src={espacio2}
+                alt="Rincón acogedor del consultorio, con plantas y luz natural"
+                width={1400}
+                height={905}
+                loading="lazy"
+                className="w-full aspect-[1400/905] object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-105"
+                style={{ filter: 'saturate(0.8) sepia(0.15)' }}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 mix-blend-multiply pointer-events-none"
+                style={{ background: '#d9c9a8', opacity: 0.1 }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.section>
+  )
+}
+
+export default function Landing() {
+  const location = useLocation()
+  const { data: blocks, isLoading } = useQuery({
+    queryKey: PUBLIC_CONTENT_QUERY_KEY,
+    queryFn: () => publicAPI.getContent(),
+    select: (res) => res.data,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  // El merge con FALLBACKS asegura que la landing nunca se vea vacía,
+  // incluso mientras `isLoading` o si /public/content falla.
+  const content = mergeContentBlocks(blocks)
+
+  // Navegación a un ancla desde otra ruta (ej. "/reservar" → "/#psicoanalisis"):
+  // Lenis vive en PublicLayout y no expone su instancia acá, así que
+  // resolvemos el salto con scrollIntoView nativo — Lenis lo recoge en su
+  // siguiente frame de RAF sin conflicto.
+  useEffect(() => {
+    if (!location.hash) return
+    const id = location.hash.slice(1)
+    const el = document.getElementById(id)
+    if (el) {
+      requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+    }
+    // Solo al cambiar el hash (ej. al montar la landing con uno ya presente).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.hash])
+
+  const heroParagraphs = content.hero.body.split('\n').filter(Boolean)
+  const aboutParagraphs = content.about.body.split('\n').filter(Boolean)
+  const services = content.services.body
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => {
+      const [name, ...rest] = line.split(' — ')
+      return { name, description: rest.join(' — ') }
+    })
+  const steps = content.how_it_works.body.split('\n').filter(Boolean)
+  const contactLines = content.contact.body.split('\n').filter(Boolean)
+
+  return (
+    <div className={isLoading ? 'opacity-90' : ''}>
+      {/* Hero: composición broken-grid (titular editorial a la izquierda,
+          forma orgánica "retrato" desplazada a la derecha) sobre un fondo
+          atmosférico de MeshGradient + grano sutil. */}
+      <section className="relative overflow-x-hidden border-b border-stone-200/60">
+        <MeshGradient />
+        <GrainOverlay />
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 lg:py-32">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            {/* Columna de texto */}
+            <div className="lg:col-span-7 lg:pr-4">
+              <HeroHeadline text={content.hero.title} />
+
+              <motion.div
+                className="mt-7 max-w-xl space-y-2"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.4 }}
+              >
+                {heroParagraphs.map((p, i) => (
+                  <p key={i} className="text-lg text-stone-700 leading-relaxed">
+                    {p}
+                  </p>
+                ))}
+              </motion.div>
+
+              {/* Acento poético: identidad de marca — Felipe es poeta además
+                  de psicólogo clínico. Separado del resto con un pequeño
+                  ornamento y más aire, para que lea como una cita, no como
+                  una línea más del subtítulo. */}
+              <motion.div
+                className="mt-12 sm:mt-14 max-w-md"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.62, duration: 0.4 }}
+              >
+                <span aria-hidden="true" className="block h-px w-10 bg-stone-300 mb-4" />
+                <p className="font-display italic text-xl sm:text-2xl text-stone-600 leading-snug">
+                  «Que los puertos rojos inunden las vidas»
+                </p>
+                <span className="block not-italic text-sm text-stone-400 mt-2">— Felipe Caro</span>
+              </motion.div>
+
+              <motion.div
+                className="mt-12 flex flex-wrap items-center gap-4"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.72, duration: 0.4 }}
+              >
+                <Link to="/reservar">
+                  <motion.span
+                    className="inline-flex"
+                    whileHover={{ scale: 1.035 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+                  >
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      className="gap-2 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-[0_8px_28px_-6px_rgba(56,106,89,0.55)]"
+                    >
+                      Reservar hora <ArrowRight size={18} />
+                    </Button>
+                  </motion.span>
+                </Link>
+                <a href="#sobre-mi">
+                  <Button variant="ghost" size="lg" className="gap-1.5 text-primary-700 hover:bg-primary-50">
+                    Conocer más <ArrowDown size={16} />
+                  </Button>
+                </a>
+              </motion.div>
+            </div>
+
+            {/* Retrato de Felipe: máscara blob orgánica de verdad —
+                asimétrica, sin ring artificial, con un halo cálido difuso
+                detrás (mismo lenguaje que el halo de "Sobre mí") en vez de
+                un borde blanco duro. Duotone sutil hacia la paleta
+                (grayscale + overlay salvia en mix-blend-mode) para integrarlo
+                a la atmósfera del MeshGradient. Se agranda y respira hacia
+                la franja siguiente con un margen negativo. */}
+            <motion.div
+              className="lg:col-span-5 flex justify-center lg:justify-end relative z-10 lg:-mb-16"
+              initial={{ opacity: 0, scale: 0.94, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="relative h-72 w-72 sm:h-96 sm:w-96 lg:h-[26rem] lg:w-[26rem] lg:translate-y-6">
+                {/* Halo: gradiente difuso detrás del blob, sustituye al ring blanco */}
+                <div
+                  aria-hidden="true"
+                  className="absolute -inset-6 sm:-inset-8 -z-10 blur-2xl opacity-80"
+                  style={{
+                    background: 'radial-gradient(circle, rgba(196,118,74,0.4) 0%, rgba(107,127,94,0.28) 55%, transparent 75%)',
+                    borderRadius: '58% 42% 45% 55% / 48% 55% 45% 52%',
+                  }}
+                />
+                <div
+                  className="relative h-full w-full overflow-hidden shadow-[0_30px_80px_-20px_rgba(196,118,74,0.35),0_20px_60px_-15px_rgba(59,74,53,0.4)]"
+                  style={{ borderRadius: '58% 42% 45% 55% / 48% 55% 45% 52%' }}
+                >
+                  {/* Zoom + origen bajo: la foto original (selfie) trae un
+                      póster de Freud y un interruptor de luz en la pared de
+                      fondo; el reencuadre los deja fuera del recorte hasta
+                      tener un retrato profesional (pendiente de Felipe). */}
+                  <img
+                    src={felipePortrait}
+                    alt="Retrato de Felipe Caro, psicólogo clínico"
+                    width={530}
+                    height={530}
+                    className="h-full w-full object-cover grayscale-[15%] contrast-[1.05] scale-[1.22] origin-[56%_100%]"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 mix-blend-color"
+                    style={{ background: 'linear-gradient(135deg, #586b4c 0%, #4a5d42 55%, #c4764a 130%)', opacity: 0.28 }}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <TrustBar />
+
+      {/* About: composición editorial asimétrica 5/7, foto real de Felipe en
+          su consulta con marco editorial (esquinas generosas, leve rotación),
+          seguida de una mini-línea de formación académica y chips de motivos
+          de consulta frecuentes. */}
+      <motion.section id="sobre-mi" className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 scroll-mt-20 overflow-hidden" {...sectionReveal}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="order-2 lg:order-1 lg:col-span-5 relative flex justify-center lg:justify-start">
+            <div
+              aria-hidden="true"
+              className="absolute -z-10 h-64 w-64 sm:h-80 sm:w-80 rounded-full blur-3xl opacity-70"
+              style={{ background: 'radial-gradient(circle, rgba(74,133,112,0.35) 0%, rgba(217,158,90,0.22) 55%, transparent 75%)' }}
+            />
+            <div className="relative rounded-2xl bg-white p-1.5 shadow-[0_16px_48px_-12px_rgba(38,72,60,0.4)]">
+              <img
+                src={felipeSobre}
+                alt="Felipe Caro sentado en el diván de su consulta"
+                width={768}
+                height={694}
+                loading="lazy"
+                className="h-64 w-56 sm:h-80 sm:w-72 rounded-xl object-cover"
+              />
+            </div>
+          </div>
+
+          <div className="order-1 lg:order-2 lg:col-span-7">
+            <SectionHeading label="Sobre mí" className="mb-7">
+              {content.about.title}
+            </SectionHeading>
+            {/* Primer párrafo como "lead" editorial (más grande y oscuro),
+                el resto en registro normal — da jerarquía sin tocar el copy
+                del CMS. */}
+            <div className="space-y-5 max-w-prose">
+              {aboutParagraphs.map((p, i) => (
+                <p
+                  key={i}
+                  className={
+                    i === 0
+                      ? 'text-xl sm:text-2xl text-stone-800 leading-relaxed font-display'
+                      : 'text-lg text-stone-600 leading-loose'
+                  }
+                >
+                  {p}
+                </p>
+              ))}
+            </div>
+
+            {/* Formación: línea de tiempo vertical compacta */}
+            <div className="mt-10 max-w-prose">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.1em] text-stone-400 mb-4">
+                Formación
+              </h3>
+              <ol className="relative border-l border-primary-200 pl-8 space-y-5">
+                {EDUCATION.map(({ year, icon: Icon, label }, i) => (
+                  <li key={i} className="relative">
+                    <span className="absolute -left-[2.05rem] top-0 flex h-7 w-7 items-center justify-center rounded-full bg-primary-50 border border-primary-200 text-primary-700 ring-4 ring-cream-50">
+                      <Icon size={14} strokeWidth={1.5} />
+                    </span>
+                    <span className="block text-sm text-stone-700 leading-snug pt-1">
+                      <span className="font-medium text-stone-900">{year}</span> — {label}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            {/* Motivos de consulta frecuentes: chips informativos */}
+            <div className="mt-8 flex flex-wrap gap-2 max-w-prose">
+              {CONSULT_REASONS.map((reason) => (
+                <span
+                  key={reason}
+                  className="text-xs font-medium text-primary-700/90 bg-primary-50/80 rounded-full px-2.5 py-1"
+                >
+                  {reason}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      <ElEspacio />
+
+      {/* Enfoque: "¿Qué es el psicoanálisis?" — entre "El espacio" y
+          "Evidencia", para que el hilo narrativo fluya: conocer a Felipe →
+          entender su enfoque → ver la evidencia. Bloque CMS `approach`. */}
+      <ApproachSection title={content.approach.title} body={content.approach.body} />
+
+      {/* Evidencia: por qué consultar, con datos verificados (OMS + eficacia
+          de la psicoterapia). Bloque CMS `evidence`, entre "El enfoque" y
+          "Servicios". */}
+      <EvidenceSection title={content.evidence.title} body={content.evidence.body} />
+
+      {/* Services: terapia infanto-juvenil como servicio estrella, más
+          adultos y orientación a padres. Cards con hover premium (elevación
+          + borde salvia + micro-scale) y formas orgánicas. */}
+      <motion.section id="servicios" className="max-w-6xl mx-auto px-4 sm:px-6 py-20 scroll-mt-20" {...sectionReveal}>
+        <div className="mb-12">
+          <SectionHeading label="Servicios" align="center">{content.services.title}</SectionHeading>
+          <p className="text-stone-600 mt-3 text-center">Un espacio pensado para cada etapa de la vida</p>
+        </div>
+        <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={{ once: true, margin: '-80px' }}>
+          <BentoGrid>
+            {services.map((service, i) => {
+              const Icon = serviceIcon(service.name)
+              return (
+                <BentoCard key={i}>
+                  <motion.div
+                    variants={staggerItem}
+                    className="h-full"
+                    whileHover={{ y: -6, scale: 1.015, rotate: i % 2 === 0 ? -0.4 : 0.4 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                  >
+                    <GlowCard className="h-full border-transparent hover:border-primary-200 transition-colors duration-300">
+                      <CardContent className="p-7 h-full flex flex-col">
+                        <div
+                          className="h-12 w-12 flex items-center justify-center text-primary-700 bg-primary-50 mb-5"
+                          style={{ borderRadius: '46% 54% 58% 42% / 50% 44% 56% 50%' }}
+                        >
+                          <Icon size={22} strokeWidth={1.75} />
+                        </div>
+                        <h3 className="font-display text-xl font-medium text-stone-900 mb-2">{service.name}</h3>
+                        <p className="text-stone-600 text-sm leading-relaxed">{service.description}</p>
+                      </CardContent>
+                    </GlowCard>
+                  </motion.div>
+                </BentoCard>
+              )
+            })}
+          </BentoGrid>
+        </motion.div>
+      </motion.section>
+
+      {/* How it works: scrollytelling — línea vertical que se "dibuja" con
+          scaleY atado al progreso de scroll del contenedor, pasos numerados
+          gigantes en Fraunces que se encienden al pasar. */}
+      <HowItWorksSection title={content.how_it_works.title} steps={steps} />
+
+      {/* Testimonios: parseados del bloque CMS `testimonials`. */}
+      <TestimonialsMarquee title={content.testimonials.title} body={content.testimonials.body} />
+
+      {/* Banda de cierre: única llamada final a la acción de la landing.
+          Reemplaza la antigua sección "Contacto" (que duplicaba el footer:
+          misma columna de datos + un segundo botón "Reservar hora"). Fondo
+          salvia muy profundo con grano + un lavado de acuarela oscuro apenas
+          perceptible, para que el crema/terracota del CTA contraste de
+          verdad (nada de salvia sobre salvia). Los datos de contacto quedan
+          como una línea compacta bajo el botón, no como otra sección de
+          venta — esa es ahora la única fuente de esos datos junto al footer. */}
+      <motion.section
+        id="contacto"
+        className="relative overflow-hidden bg-primary-900 scroll-mt-20"
+        {...sectionReveal}
+      >
+        <div
+          aria-hidden="true"
+          className="absolute -top-[20%] left-[10%] h-[70%] w-[70%] rounded-full blur-3xl"
+          style={{ background: 'radial-gradient(circle, #1c2318 0%, transparent 70%)', opacity: 0.5 }}
+        />
+        <GrainOverlay className="opacity-[0.06] mix-blend-overlay" />
+
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 py-24 sm:py-28 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.4 }}
+          >
+            <span className="block text-xs font-semibold uppercase tracking-[0.22em] text-primary-300 mb-4">
+              Empieza hoy
+            </span>
+            <h2 className="font-display text-4xl sm:text-5xl font-medium text-cream-50 leading-[1.1] tracking-tight mb-4">
+              {content.contact.title || '¿Listo para empezar tu proceso?'}
+            </h2>
+            <p className="text-lg text-primary-200 max-w-xl mx-auto mb-10">
+              Reserva tu primera sesión en pocos minutos, sin llamadas ni esperas.
+            </p>
+
+            <Link to="/reservar" className="inline-block">
+              <motion.span
+                className="inline-flex"
+                whileHover={{ scale: 1.035 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+              >
+                <Button
+                  size="lg"
+                  className="gap-2 bg-accent-500 text-cream-50 hover:bg-accent-600 active:bg-accent-700 shadow-[0_8px_28px_-6px_rgba(196,118,74,0.55)]"
+                >
+                  Reservar hora <ArrowRight size={18} />
+                </Button>
+              </motion.span>
+            </Link>
+
+            {/* Datos de contacto: línea compacta, no otra sección — el
+                footer inmediatamente debajo ya no los repite. */}
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+              {contactLines.map((line, i) => {
+                const Icon = contactIcon(line)
+                return (
+                  <span key={i} className="inline-flex items-center gap-2 text-sm text-primary-200">
+                    <Icon size={15} className="text-primary-400 shrink-0" />
+                    {line}
+                  </span>
+                )
+              })}
+            </div>
+          </motion.div>
+        </div>
+      </motion.section>
+    </div>
+  )
+}
