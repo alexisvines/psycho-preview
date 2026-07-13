@@ -123,8 +123,8 @@ export default function ApproachSection({ title, body }) {
             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div className="flex-1">
                 <div className="flex items-start gap-4">
-                  <div className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-600 ring-1 ring-accent-200">
-                    <Compass size={22} strokeWidth={1.75} />
+                  <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-600 ring-1 ring-accent-200">
+                    <Compass size={20} strokeWidth={1.75} />
                   </div>
                   <div>
                     <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-accent-600 mb-2">
