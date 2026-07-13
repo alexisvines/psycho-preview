@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { MailCheck, ArrowLeft, ArrowRight, Info, Lock, Wallet } from 'lucide-react'
@@ -38,9 +38,16 @@ function stepMotion(shouldReduceMotion) {
 
 export default function Booking() {
   const { isAuthenticated } = useAuth()
+  const location = useLocation()
   const shouldReduceMotion = useReducedMotion()
-  const [step, setStep] = useState(1)
-  const [sessionTypeId, setSessionTypeId] = useState(null)
+  // Los cards de "Servicios" en el landing enlazan acá con el tipo de
+  // sesión correspondiente ya elegido (state de router, ver
+  // serviceSessionTypeId en Landing.jsx) — si viene uno válido, saltamos
+  // directo al paso 2 en vez de hacer al visitante elegir de nuevo algo
+  // que ya decidió al hacer clic.
+  const preselectedType = getSessionType(location.state?.sessionTypeId)
+  const [step, setStep] = useState(preselectedType ? 2 : 1)
+  const [sessionTypeId, setSessionTypeId] = useState(preselectedType?.id ?? null)
   const [selectedSlot, setSelectedSlot] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
   const [advanceError, setAdvanceError] = useState('')
