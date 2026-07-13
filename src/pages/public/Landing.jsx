@@ -7,7 +7,6 @@ import {
   ArrowRight,
   ArrowDown,
   Mail,
-  Phone,
   Clock3,
   MapPin,
   Baby,
@@ -34,6 +33,7 @@ import { Button } from '@/components/ui/Button'
 import { CardContent } from '@/components/ui/Card'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { GrainOverlay } from '@/components/ui/GrainOverlay'
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon'
 import {
   staggerContainer,
   staggerItem,
@@ -163,10 +163,25 @@ function TrustBar() {
 function contactIcon(line = '') {
   const key = line.toLowerCase()
   if (key.startsWith('dirección') || key.startsWith('direccion')) return MapPin
-  if (key.startsWith('teléfono') || key.startsWith('telefono')) return Phone
+  if (isPhoneLine(line)) return WhatsAppIcon
   if (key.startsWith('horario') || key.startsWith('atención') || key.startsWith('atencion')) return Clock3
   if (key.startsWith('email') || key.startsWith('correo')) return Mail
   return CalendarCheck
+}
+
+function isPhoneLine(line = '') {
+  const key = line.toLowerCase()
+  return key.startsWith('teléfono') || key.startsWith('telefono')
+}
+
+// La línea de teléfono redirige directo a WhatsApp (mismo número, mismo
+// destino que el botón flotante) en vez de mostrarse como texto plano —
+// para la mayoría de los pacientes, escribir por WhatsApp es más directo
+// que llamar.
+function whatsappLinkFromLine(line) {
+  const digits = line.replace(/\D/g, '')
+  const message = encodeURIComponent('Hola Felipe, te escribo desde tu sitio web.')
+  return `https://wa.me/${digits}?text=${message}`
 }
 
 // Paso de "cómo funciona": número gigante en Fraunces, semi-recortado detrás
@@ -785,6 +800,20 @@ export default function Landing() {
             <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               {contactLines.map((line, i) => {
                 const Icon = contactIcon(line)
+                if (isPhoneLine(line)) {
+                  return (
+                    <a
+                      key={i}
+                      href={whatsappLinkFromLine(line)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm text-primary-200 hover:text-white transition-colors"
+                    >
+                      <Icon size={15} className="text-primary-400 shrink-0" />
+                      {line}
+                    </a>
+                  )
+                }
                 return (
                   <span key={i} className="inline-flex items-center gap-2 text-sm text-primary-200">
                     <Icon size={15} className="text-primary-400 shrink-0" />
