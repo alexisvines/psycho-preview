@@ -31,13 +31,17 @@ export const LOGOS = [
 const ThemeContext = createContext(null)
 
 // Modo claro/oscuro: a diferencia de palette/logo (herramientas de decisión
-// de ESTE repo de vista previa), este SÍ es un feature real del sitio — el
-// valor inicial respeta prefers-color-scheme del sistema si el visitante
-// nunca lo tocó, y una vez que elige queda fijo (persistido) en esa sesión.
+// de ESTE repo de vista previa), este SÍ es un feature real del sitio.
+// Deliberadamente NO sigue prefers-color-scheme del sistema en la primera
+// visita — seguirlo hacía que el sitio cargara oscuro para cualquiera con
+// el modo oscuro activado en su teléfono, sin que lo haya pedido acá, y
+// todo el trabajo editorial (papel crema, fotos en duotono, paleta salvia/
+// terracota) vive en el modo claro. Toda visita nueva ve esa versión
+// primero; el modo oscuro es un extra que se elige a mano y, una vez
+// elegido, queda recordado (persistido) para la próxima visita.
 function getInitialMode() {
   const saved = localStorage.getItem('theme-mode')
-  if (saved === 'light' || saved === 'dark') return saved
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return saved === 'dark' ? 'dark' : 'light'
 }
 
 export function ThemeProvider({ children }) {
