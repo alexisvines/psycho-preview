@@ -53,7 +53,7 @@ export default function ApproachSection({ title, body }) {
       {...sectionReveal}
     >
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
-        <SectionLabel>El enfoque</SectionLabel>
+        <SectionLabel tone="negative">El enfoque</SectionLabel>
         <h2 className="font-display text-3xl sm:text-4xl font-semibold text-cream-50 leading-[1.1] tracking-tight mb-10">
           {title}
         </h2>
