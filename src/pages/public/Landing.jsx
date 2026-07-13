@@ -262,7 +262,7 @@ function ElEspacio() {
   return (
     <motion.section
       ref={ref}
-      className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-24"
+      className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-24 border-t border-primary-900/10"
       {...sectionReveal}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
@@ -498,7 +498,7 @@ export default function Landing() {
           de consulta frecuentes. */}
       <motion.section id="sobre-mi" className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 scroll-mt-20 overflow-hidden" {...sectionReveal}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          <div className="order-2 lg:order-1 lg:col-span-5 relative flex justify-center lg:justify-start">
+          <div className="order-1 lg:col-span-5 relative flex justify-center lg:justify-start">
             {/* Retrato de autor, chico y honesto (no el hero): mismo tratamiento
                 duotono que la placa del hero, para que se sientan la misma
                 marca. Foto nueva (luz de ventana, sin elementos raros de
@@ -530,7 +530,7 @@ export default function Landing() {
             </div>
           </div>
 
-          <div className="order-1 lg:order-2 lg:col-span-7">
+          <div className="order-2 lg:col-span-7">
             <SectionHeading label="Sobre mí" className="mb-7">
               {content.about.title}
             </SectionHeading>
