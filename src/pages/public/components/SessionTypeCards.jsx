@@ -30,7 +30,7 @@ export default function SessionTypeCards({ value, onChange }) {
             className={`relative flex flex-col gap-3 rounded-2xl border p-5 cursor-pointer transition-all duration-200 ${
               isSelected
                 ? 'border-primary-500 bg-primary-50/60 shadow-md ring-1 ring-primary-200'
-                : 'border-stone-200 bg-white hover:border-primary-300 hover:shadow-md hover:-translate-y-0.5'
+                : 'border-line/10 bg-surface hover:border-primary-300 hover:shadow-md hover:-translate-y-0.5'
             } ${type.featured ? 'sm:col-span-2' : ''}`}
           >
             <input
@@ -49,7 +49,7 @@ export default function SessionTypeCards({ value, onChange }) {
             <div className="flex items-start gap-3.5">
               <div
                 className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                  isSelected ? 'bg-primary-600 text-white' : 'bg-stone-100 text-stone-500'
+                  isSelected ? 'bg-primary-600 text-white' : 'bg-primary-50 text-primary-500'
                 }`}
               >
                 <Icon size={19} />
@@ -72,7 +72,7 @@ export default function SessionTypeCards({ value, onChange }) {
               <Link
                 to="/#psicoanalisis"
                 onClick={(e) => e.stopPropagation()}
-                className="text-xs font-medium text-primary-600 hover:text-primary-700 underline underline-offset-2 decoration-primary-300 hover:decoration-primary-500 transition-colors w-fit"
+                className="text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-300 dark:hover:text-primary-200 underline underline-offset-2 decoration-primary-300 hover:decoration-primary-500 transition-colors w-fit"
               >
                 ¿No sabes si este enfoque es para ti? Conoce el psicoanálisis →
               </Link>

@@ -6,7 +6,7 @@ export function SectionLabel({ children, align = 'left', tone = 'default' }) {
   return (
     <span
       className={`block text-xs font-semibold uppercase tracking-[0.22em] mb-3 ${
-        tone === 'negative' ? 'text-primary-300' : 'text-primary-600'
+        tone === 'negative' ? 'text-primary-300' : 'text-primary-600 dark:text-primary-300'
       } ${align === 'center' ? 'text-center' : ''}`}
     >
       {children}

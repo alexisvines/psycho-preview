@@ -16,7 +16,8 @@ export function Button({
     primary: 'bg-primary-600 text-white shadow-button hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50',
     secondary: 'bg-stone-100 text-stone-900 hover:bg-stone-200 active:bg-stone-300 disabled:opacity-50',
     ghost: 'bg-transparent text-stone-700 hover:bg-stone-100 active:bg-stone-200 disabled:opacity-50',
-    outline: 'border border-primary-300 bg-transparent text-primary-700 hover:bg-primary-50 active:bg-primary-100 disabled:opacity-50',
+    outline:
+      'border border-primary-300 dark:border-primary-400/40 bg-transparent text-primary-700 dark:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/40 active:bg-primary-100 dark:active:bg-primary-900/60 disabled:opacity-50',
     danger: 'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 disabled:opacity-50',
   };
 

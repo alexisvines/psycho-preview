@@ -5,7 +5,7 @@ export function Card({ children, className = '', hoverable = false, ...props }) 
   // surface (no white puro) + borde/sombra tintados con la tinta de la
   // paleta activa: sobre un papel ya entonado, esto es lo que hace que la
   // card "se despegue" en vez de fundirse con el fondo.
-  const baseClasses = 'bg-surface border border-primary-900/10 rounded-xl shadow-card';
+  const baseClasses = 'bg-surface border border-line/10 rounded-xl shadow-card';
 
   return (
     <motion.div
@@ -20,7 +20,7 @@ export function Card({ children, className = '', hoverable = false, ...props }) 
 }
 
 export function CardHeader({ children, className = '' }) {
-  return <div className={`px-6 py-4 border-b border-primary-900/10 ${className}`}>{children}</div>;
+  return <div className={`px-6 py-4 border-b border-line/10 ${className}`}>{children}</div>;
 }
 
 export function CardContent({ children, className = '' }) {
@@ -28,5 +28,5 @@ export function CardContent({ children, className = '' }) {
 }
 
 export function CardFooter({ children, className = '' }) {
-  return <div className={`px-6 py-4 border-t border-primary-900/10 flex gap-2 ${className}`}>{children}</div>;
+  return <div className={`px-6 py-4 border-t border-line/10 flex gap-2 ${className}`}>{children}</div>;
 }
