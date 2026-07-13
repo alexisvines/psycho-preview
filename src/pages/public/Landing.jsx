@@ -265,7 +265,15 @@ function ElEspacio() {
     // dos fondos planos idénticos no bastaba (feedback de Alexis: la
     // transición se sentía "rara", sin claridad de dónde terminaba una
     // sección y empezaba la otra).
-    <motion.section ref={ref} className="bg-cream-100 border-t border-line/10" {...sectionReveal}>
+    // Sin sectionReveal acá (a diferencia de esas otras secciones): esta es
+    // la única que además tiene una foto con parallax continuo atado al
+    // mismo scroll. Sumarle el fade+slide de entrada del bloque completo
+    // hacía que, al llegar a la sección, se vieran dos animaciones
+    // compitiendo a la vez (el bloque entrando + la foto ya despegando) —
+    // eso era el "scroll raro" (feedback de Alexis). El bloque ahora
+    // aparece estático; el parallax de la foto es la única señal de
+    // movimiento, y es continua, no un salto puntual.
+    <motion.section ref={ref} className="bg-cream-100 border-t border-line/10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           <div className="lg:col-span-5 order-2 lg:order-1">

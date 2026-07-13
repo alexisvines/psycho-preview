@@ -139,7 +139,7 @@ export default function Booking() {
   const motionProps = stepMotion(shouldReduceMotion)
 
   return (
-    <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-14 sm:py-16 pb-28 lg:pb-16">
+    <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-14 sm:py-16 pb-6 lg:pb-16">
       <GrainOverlay className="-z-10" />
 
       <Link
@@ -322,10 +322,18 @@ export default function Booking() {
         </motion.p>
       )}
 
-      {/* CTA de avance: sticky abajo en mobile, inline en desktop (salvo el
-          paso 3, cuyo submit vive dentro del <form> de arriba). */}
+      {/* CTA de avance: pegado abajo en mobile mientras se scrollea el
+          formulario, en línea en desktop (salvo el paso 3, cuyo submit vive
+          dentro del <form> de arriba). `sticky` en vez de `fixed`: fixed
+          queda anclado al viewport durante TODO el scroll de la página,
+          tapando las cards al pasar por debajo y hasta el footer del sitio
+          una vez que se scrollea más allá del formulario (bug reportado por
+          Alexis). `sticky` se "suelta" solo al llegar al final natural de
+          este contenedor, antes de que empiece el footer — nunca lo tapa.
+          El margen negativo compensa el padding del wrapper para que la
+          barra siga llegando de borde a borde en mobile. */}
       {step < 3 && (
-        <div className="fixed lg:static bottom-0 left-0 right-0 z-20 lg:z-auto lg:mt-8 lg:flex lg:justify-end">
+        <div className="sticky lg:static bottom-0 -mx-4 sm:-mx-6 lg:mx-0 z-20 lg:z-auto lg:mt-8 lg:flex lg:justify-end">
           <div className="bg-surface/95 backdrop-blur border-t border-stone-200 lg:bg-transparent lg:border-0 lg:backdrop-blur-none px-4 py-3 lg:p-0">
             <Button type="button" variant="primary" size="lg" className="w-full lg:w-auto" onClick={handleContinue}>
               Continuar
@@ -336,7 +344,7 @@ export default function Booking() {
       )}
 
       {step === 3 && (
-        <div className="fixed lg:hidden bottom-0 left-0 right-0 z-20 bg-surface/95 backdrop-blur border-t border-stone-200 px-4 py-3">
+        <div className="sticky lg:hidden bottom-0 -mx-4 sm:-mx-6 z-20 bg-surface/95 backdrop-blur border-t border-stone-200 px-4 py-3">
           <Button
             type="button"
             variant="primary"
