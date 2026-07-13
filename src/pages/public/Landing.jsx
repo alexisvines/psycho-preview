@@ -655,10 +655,17 @@ export default function Landing() {
                   <Link
                     to="/reservar"
                     state={reserveState}
-                    className="group relative flex h-full min-h-[22rem] flex-col justify-end overflow-hidden rounded-2xl bg-primary-800 border border-white/10 shadow-lifted p-8 sm:p-10 transition-transform duration-300 hover:-translate-y-1"
+                    className="group relative flex h-full min-h-[22rem] flex-col overflow-hidden rounded-2xl bg-primary-800 border border-white/10 shadow-lifted p-8 sm:p-10 transition-transform duration-300 hover:-translate-y-1"
                   >
+                    {/* Badge y círculo del ícono en flujo normal (no
+                        absolute + justify-end): con eso, cuánto texto
+                        entrara en la descripción podía empujar el ícono
+                        hacia arriba hasta chocar con el badge en pantallas
+                        angostas o con el texto del sistema agrandado — el
+                        choque que vio Alexis en su teléfono. En flujo
+                        normal es imposible que se superpongan. */}
                     <GrainOverlay opacity={0.05} blend="overlay" />
-                    <span className="absolute top-8 left-8 sm:top-10 sm:left-10 inline-flex self-start items-center gap-1.5 rounded-full bg-accent-500 text-white text-xs font-semibold px-2.5 py-1">
+                    <span className="relative self-start inline-flex items-center gap-1.5 rounded-full bg-accent-500 text-white text-xs font-semibold px-2.5 py-1 mb-5">
                       Servicio destacado
                     </span>
                     <div
@@ -671,6 +678,7 @@ export default function Landing() {
                       {service.name}
                     </h3>
                     <p className="relative text-primary-200 leading-relaxed max-w-md">{service.description}</p>
+                    <div className="mt-auto" />
                     <span className="relative mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-white">
                       Reservar para tu hijo/a
                       <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
