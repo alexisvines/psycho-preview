@@ -22,7 +22,7 @@ export default function SuccessTimeline() {
         return (
           <motion.li key={step.title} variants={staggerItem} className="relative flex gap-4">
             {!isLast && (
-              <span className="absolute left-[15px] top-9 h-[calc(100%-4px)] w-px bg-stone-200" aria-hidden="true" />
+              <span className="absolute left-[15px] top-9 h-[calc(100%-4px)] w-px bg-primary-100" aria-hidden="true" />
             )}
             <span className="relative shrink-0 h-8 w-8 rounded-full bg-primary-50 border border-primary-200 text-primary-600 flex items-center justify-center">
               <Icon size={15} />

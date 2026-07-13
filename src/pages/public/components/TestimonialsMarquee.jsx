@@ -43,7 +43,7 @@ function Stars() {
 
 function TestimonialCard({ name, text }) {
   return (
-    <figure className="w-[290px] sm:w-[360px] shrink-0 rounded-3xl border border-stone-200/70 bg-white/95 px-6 py-6 shadow-card">
+    <figure className="w-[290px] sm:w-[360px] shrink-0 rounded-3xl border border-stone-200/70 bg-surface/95 px-6 py-6 shadow-card">
       <Stars />
       <blockquote className="mt-3 font-display italic text-[15px] sm:text-base text-stone-700 leading-relaxed">
         “{text}”
@@ -120,7 +120,7 @@ export default function TestimonialsMarquee({ title, body }) {
               <Star size={14} className="fill-amber-500" strokeWidth={0} />
               5,0 · 44 reseñas en Google
             </span>
-            <span className="inline-flex items-center gap-1 text-xs text-stone-500 transition-colors group-hover:text-primary-700">
+            <span className="inline-flex items-center gap-1 text-xs text-stone-500 transition-colors group-hover:text-primary-700 dark:group-hover:text-primary-300">
               Ver todas las reseñas <ExternalLink size={12} />
             </span>
           </a>

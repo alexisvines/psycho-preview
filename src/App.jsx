@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { ToastProvider } from './components/ui/ToastContext'
@@ -7,6 +7,7 @@ import PublicLayout from './components/PublicLayout'
 import ThemeSwitcher from './components/ThemeSwitcher'
 import Landing from './pages/public/Landing'
 import Booking from './pages/public/Booking'
+import NotFound from './pages/public/NotFound'
 
 const queryClient = new QueryClient()
 
@@ -24,7 +25,7 @@ function App() {
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<Landing />} />
                   <Route path="/reservar" element={<Booking />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
+                  <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>
             </HashRouter>

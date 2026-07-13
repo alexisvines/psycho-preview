@@ -29,7 +29,7 @@ export default function WizardProgress({ step, onStepClick }) {
             >
               <span
                 className={`font-display text-2xl sm:text-3xl block mb-1 transition-colors ${
-                  isActive ? 'text-primary-600' : isDone ? 'text-stone-900' : 'text-stone-300'
+                  isActive ? 'text-primary-600 dark:text-primary-300' : isDone ? 'text-stone-900' : 'text-stone-300'
                 }`}
               >
                 0{s.n}
@@ -39,7 +39,7 @@ export default function WizardProgress({ step, onStepClick }) {
                   isActive
                     ? 'text-stone-900'
                     : isDone
-                      ? 'text-stone-500 group-hover:text-primary-600'
+                      ? 'text-stone-500 group-hover:text-primary-600 dark:group-hover:text-primary-300'
                       : 'text-stone-300'
                 }`}
               >
@@ -49,7 +49,7 @@ export default function WizardProgress({ step, onStepClick }) {
           )
         })}
       </div>
-      <div className="relative mt-4 h-1 bg-stone-200 rounded-full overflow-hidden">
+      <div className="relative mt-4 h-1 bg-line/15 rounded-full overflow-hidden">
         <motion.div
           className="absolute inset-y-0 left-0 bg-primary-600 rounded-full"
           initial={false}

@@ -33,7 +33,6 @@ import { SectionHeading } from './components/SectionHeading'
 import { Button } from '@/components/ui/Button'
 import { CardContent } from '@/components/ui/Card'
 import { GlowCard } from '@/components/ui/GlowCard'
-import { BentoGrid, BentoCard } from '@/components/ui/BentoGrid'
 import { GrainOverlay } from '@/components/ui/GrainOverlay'
 import {
   staggerContainer,
@@ -75,7 +74,7 @@ function HeroHeadline({ text }) {
           <motion.span
             key={i}
             variants={wordRevealItem(shouldReduceMotion)}
-            className={`inline-block mr-[0.28em] ${isLast ? 'text-primary-700' : ''}`}
+            className={`inline-block mr-[0.28em] ${isLast ? 'text-primary-700 dark:text-primary-300' : ''}`}
           >
             {word}
           </motion.span>
@@ -123,14 +122,14 @@ const CONSULT_REASONS = [
 function TrustBar() {
   return (
     <motion.section
-      className="border-b border-primary-900/10 bg-cream-100"
+      className="border-b border-line/10 bg-cream-100"
       {...sectionReveal}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-7">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-5">
           {CREDENTIALS.map(({ icon: Icon, label }, i) => (
             <div key={i} className="flex items-center gap-2.5 min-w-0">
-              <Icon size={17} className="text-primary-600 shrink-0" strokeWidth={1.5} />
+              <Icon size={17} className="text-primary-600 dark:text-primary-300 shrink-0" strokeWidth={1.5} />
               <span className="text-[0.7rem] sm:text-xs font-medium uppercase tracking-[0.08em] text-stone-500 leading-tight">
                 {label}
               </span>
@@ -219,7 +218,7 @@ function HowItWorksSection({ title, steps }) {
   return (
     <motion.section
       id="como-funciona"
-      className="bg-cream-100 border-y border-primary-900/10 scroll-mt-20"
+      className="bg-cream-100 border-y border-line/10 scroll-mt-20"
       {...sectionReveal}
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
@@ -266,7 +265,7 @@ function ElEspacio() {
     // dos fondos planos idénticos no bastaba (feedback de Alexis: la
     // transición se sentía "rara", sin claridad de dónde terminaba una
     // sección y empezaba la otra).
-    <motion.section ref={ref} className="bg-cream-100 border-t border-primary-900/10" {...sectionReveal}>
+    <motion.section ref={ref} className="bg-cream-100 border-t border-line/10" {...sectionReveal}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           <div className="lg:col-span-5 order-2 lg:order-1">
@@ -377,7 +376,7 @@ export default function Landing() {
       {/* Hero: titular editorial a la izquierda, placa de retrato rectangular
           montada sobre un panel de color sólido a la derecha (bloque real,
           no atmósfera difusa). */}
-      <section className="relative overflow-x-hidden border-b border-primary-900/10">
+      <section className="relative overflow-x-hidden border-b border-line/10">
         {/* Bloque de color real (no atmósfera difusa): panel oscuro que
             ocupa el 42% derecho en desktop — el primer viewport ya tiene
             cuerpo de color, no solo detalle sobre papel casi blanco. */}
@@ -421,7 +420,11 @@ export default function Landing() {
                   </motion.span>
                 </Link>
                 <a href="#sobre-mi">
-                  <Button variant="ghost" size="lg" className="gap-1.5 text-primary-700 hover:bg-primary-50">
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    className="gap-1.5 text-primary-700 hover:bg-primary-50 dark:text-primary-300 dark:hover:bg-primary-900/40"
+                  >
                     Conocer más <ArrowDown size={16} />
                   </Button>
                 </a>
@@ -478,7 +481,7 @@ export default function Landing() {
                 transition={{ delay: 0.62, duration: 0.4 }}
               >
                 <span aria-hidden="true" className="block h-px w-10 bg-accent-400/60 mb-4" />
-                <p className="font-display italic text-lg sm:text-xl text-stone-800 lg:text-cream-50 leading-snug">
+                <p className="font-display italic text-lg sm:text-xl text-stone-800 lg:text-white leading-snug">
                   «Que los puertos rojos inunden las vidas»
                 </p>
                 {/* Firma real de Felipe como poeta ("Permanentes", en su sitio
@@ -602,43 +605,76 @@ export default function Landing() {
           "Servicios". */}
       <EvidenceSection title={content.evidence.title} body={content.evidence.body} />
 
-      {/* Services: terapia infanto-juvenil como servicio estrella, más
-          adultos y orientación a padres. Cards con hover premium (elevación
-          + borde salvia + micro-scale) y formas orgánicas. */}
-      <motion.section id="servicios" className="max-w-6xl mx-auto px-4 sm:px-6 py-20 scroll-mt-20" {...sectionReveal}>
+      {/* Services: composición asimétrica 7/5 (mismo lenguaje que Hero/Sobre
+          mí/El espacio), no cards iguales — terapia infanto-juvenil como
+          servicio estrella en un panel oscuro grande, adultos y orientación
+          a padres como cards claras más pequeñas a la derecha. */}
+      <motion.section id="servicios" className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-24 scroll-mt-20" {...sectionReveal}>
         <div className="mb-12">
           <SectionHeading label="Servicios" align="center">{content.services.title}</SectionHeading>
           <p className="text-stone-600 mt-3 text-center">Un espacio pensado para cada etapa de la vida</p>
         </div>
-        <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={{ once: true, margin: '-80px' }}>
-          <BentoGrid>
-            {services.map((service, i) => {
-              const Icon = serviceIcon(service.name)
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-12 gap-6"
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, margin: '-80px' }}
+        >
+          {services.map((service, i) => {
+            const Icon = serviceIcon(service.name)
+            if (i === 0) {
               return (
-                <BentoCard key={i}>
-                  <motion.div
-                    variants={staggerItem}
-                    className="h-full"
-                    whileHover={{ y: -6, scale: 1.015, rotate: i % 2 === 0 ? -0.4 : 0.4 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                <motion.div key={i} variants={staggerItem} className="lg:col-span-7">
+                  <Link
+                    to="/reservar"
+                    className="group relative flex h-full min-h-[22rem] flex-col justify-end overflow-hidden rounded-2xl bg-primary-800 border border-white/10 shadow-lifted p-8 sm:p-10 transition-transform duration-300 hover:-translate-y-1"
                   >
-                    <GlowCard className="h-full border-transparent hover:border-primary-200 transition-colors duration-300">
-                      <CardContent className="p-7 h-full flex flex-col">
-                        <div
-                          className="h-12 w-12 flex items-center justify-center text-primary-700 bg-primary-50 mb-5"
-                          style={{ borderRadius: '46% 54% 58% 42% / 50% 44% 56% 50%' }}
-                        >
-                          <Icon size={22} strokeWidth={1.75} />
-                        </div>
-                        <h3 className="font-display text-xl font-medium text-stone-900 mb-2">{service.name}</h3>
-                        <p className="text-stone-600 text-sm leading-relaxed">{service.description}</p>
-                      </CardContent>
-                    </GlowCard>
-                  </motion.div>
-                </BentoCard>
+                    <GrainOverlay opacity={0.05} blend="overlay" />
+                    <span className="absolute top-8 left-8 sm:top-10 sm:left-10 inline-flex self-start items-center gap-1.5 rounded-full bg-accent-500 text-white text-xs font-semibold px-2.5 py-1">
+                      Servicio destacado
+                    </span>
+                    <div
+                      className="relative h-14 w-14 flex items-center justify-center text-primary-800 bg-white mb-6"
+                      style={{ borderRadius: '46% 54% 58% 42% / 50% 44% 56% 50%' }}
+                    >
+                      <Icon size={26} strokeWidth={1.75} />
+                    </div>
+                    <h3 className="relative font-display text-2xl sm:text-3xl font-medium text-white mb-3">
+                      {service.name}
+                    </h3>
+                    <p className="relative text-primary-200 leading-relaxed max-w-md">{service.description}</p>
+                    <span className="relative mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-white">
+                      Reservar para tu hijo/a
+                      <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+                    </span>
+                  </Link>
+                </motion.div>
               )
-            })}
-          </BentoGrid>
+            }
+            return (
+              <motion.div key={i} variants={staggerItem} className="lg:col-span-5">
+                <motion.div
+                  className="h-full"
+                  whileHover={{ y: -6, scale: 1.015, rotate: i % 2 === 0 ? -0.4 : 0.4 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                >
+                  <GlowCard className="h-full border-transparent hover:border-primary-200 transition-colors duration-300">
+                    <CardContent className="p-7 h-full flex flex-col">
+                      <div
+                        className="h-12 w-12 flex items-center justify-center text-primary-700 bg-primary-50 mb-5"
+                        style={{ borderRadius: '46% 54% 58% 42% / 50% 44% 56% 50%' }}
+                      >
+                        <Icon size={22} strokeWidth={1.75} />
+                      </div>
+                      <h3 className="font-display text-xl font-medium text-stone-900 mb-2">{service.name}</h3>
+                      <p className="text-stone-600 text-sm leading-relaxed">{service.description}</p>
+                    </CardContent>
+                  </GlowCard>
+                </motion.div>
+              </motion.div>
+            )
+          })}
         </motion.div>
       </motion.section>
 
@@ -680,7 +716,7 @@ export default function Landing() {
             <span className="block text-xs font-semibold uppercase tracking-[0.22em] text-primary-300 mb-4">
               Empieza hoy
             </span>
-            <h2 className="font-display text-4xl sm:text-5xl font-medium text-cream-50 leading-[1.1] tracking-tight mb-4">
+            <h2 className="font-display text-4xl sm:text-5xl font-medium text-white leading-[1.1] tracking-tight mb-4">
               {content.contact.title || '¿Listo para empezar tu proceso?'}
             </h2>
             <p className="text-lg text-primary-200 max-w-xl mx-auto mb-10">
@@ -696,7 +732,7 @@ export default function Landing() {
               >
                 <Button
                   size="lg"
-                  className="gap-2 bg-accent-500 text-cream-50 hover:bg-accent-600 active:bg-accent-700 shadow-[0_8px_28px_-6px_rgba(196,118,74,0.55)]"
+                  className="gap-2 bg-accent-500 text-white hover:bg-accent-600 active:bg-accent-700 shadow-[0_8px_28px_-6px_rgba(196,118,74,0.55)]"
                 >
                   Reservar hora <ArrowRight size={18} />
                 </Button>
