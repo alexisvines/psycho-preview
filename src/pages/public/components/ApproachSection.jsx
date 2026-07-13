@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Compass } from 'lucide-react'
 import { sectionReveal } from '@/lib/motion'
 import { SectionHeading, SectionLabel } from './SectionHeading'
 import { Button } from '@/components/ui/Button'
@@ -106,7 +106,12 @@ export default function ApproachSection({ title, body }) {
         )}
 
         {/* Puente a la conversión: card clara sobre el fondo oscuro — sigue
-            siendo el único contenedor con borde de acento de toda la página. */}
+            siendo el único contenedor con borde de acento de toda la página.
+            Antes era solo texto gris parejo sin ancla visual ("tosco" —
+            feedback de Alexis); ahora tiene: ícono de orientación (calza con
+            "Felipe te orienta hacia la alternativa adecuada"), etiqueta de
+            contexto, y la frase clave del texto resaltada en color en vez de
+            todo al mismo peso. */}
         {closing && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -115,14 +120,31 @@ export default function ApproachSection({ title, body }) {
             transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="rounded-2xl border border-accent-400/50 bg-surface p-7 sm:p-9 shadow-lifted"
           >
-            <div className="grid sm:grid-cols-[1fr_auto] gap-6 items-center">
-              <div>
-                <h4 className="font-display text-xl sm:text-2xl font-semibold text-stone-900 mb-2">
-                  {closing.title}
-                </h4>
-                <p className="text-stone-700 leading-relaxed max-w-xl">{closing.text}</p>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+              <div className="flex-1">
+                <div className="flex items-start gap-4">
+                  <div className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-600 ring-1 ring-accent-200">
+                    <Compass size={22} strokeWidth={1.75} />
+                  </div>
+                  <div>
+                    <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-accent-600 mb-2">
+                      ¿Tienes dudas sobre el enfoque?
+                    </span>
+                    <h4 className="font-display text-xl sm:text-2xl font-semibold text-stone-900 mb-2">
+                      {closing.title}
+                    </h4>
+                    <p className="text-stone-700 leading-relaxed max-w-xl">
+                      {closing.text.split('. ').map((sentence, i, arr) => (
+                        <span key={i} className={i === 0 ? 'text-stone-900 font-medium' : ''}>
+                          {sentence}
+                          {i < arr.length - 1 ? '. ' : ''}
+                        </span>
+                      ))}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <Link to="/reservar" className="shrink-0">
+              <Link to="/reservar" className="shrink-0 sm:pl-2">
                 <Button variant="primary" size="lg" className="gap-2 w-full sm:w-auto">
                   Reservar primera consulta <ArrowRight size={18} />
                 </Button>
