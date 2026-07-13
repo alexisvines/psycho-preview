@@ -58,52 +58,58 @@ export default function ApproachSection({ title, body }) {
           {title}
         </h2>
 
-        {/* Intro destacada: el título del bloque CMS va como run-in heading
-            (arranque en Newsreader itálica dentro del párrafo lead) — evita
-            apilar un tercer nivel de título bajo el eyebrow y el h2. */}
-        {intro && (
-          <motion.div
-            className="max-w-3xl mb-14"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <p className="text-lg sm:text-xl text-primary-200 leading-relaxed">
-              <span className="font-display italic text-2xl sm:text-[1.65rem] text-cream-50 mr-2">
-                {intro.title}.
-              </span>
-              {intro.text}
-            </p>
-          </motion.div>
-        )}
+        {/* Panel elevado: antes intro + columnas flotaban directo sobre el
+            primary-900 (todo al mismo plano, "se difumina" — feedback de
+            Alexis). Un tono más claro que el fondo + borde + sombra le da
+            una capa real, la misma lógica de "escalera de superficies" que
+            usan las cards claras del resto del sitio, adaptada a fondo
+            oscuro (bg-primary-800 en vez de bg-surface). */}
+        <motion.div
+          className="rounded-2xl bg-primary-800 border border-white/10 shadow-lifted p-7 sm:p-10"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {/* Intro destacada: el título del bloque CMS va como run-in heading
+              (arranque en Newsreader itálica dentro del párrafo lead) — evita
+              apilar un tercer nivel de título bajo el eyebrow y el h2. */}
+          {intro && (
+            <div className="max-w-3xl mb-10">
+              <p className="text-lg sm:text-xl text-primary-200 leading-relaxed">
+                <span className="font-display italic text-2xl sm:text-[1.65rem] text-cream-50 mr-2">
+                  {intro.title}.
+                </span>
+                {intro.text}
+              </p>
+            </div>
+          )}
 
-        {/* Bloques intermedios: jerarquía secundaria, dos columnas en desktop */}
-        {middle.length > 0 && (
-          <div className={`grid sm:grid-cols-2 gap-y-8 mb-14 ${middle.length === 2 ? 'gap-x-0' : 'gap-x-10'}`}>
-            {middle.map((item, i) => (
-              <motion.div
-                key={item.title}
-                // Con exactamente dos columnas, un divisor vertical sutil
-                // hace intencional la diferencia de largo entre ambas.
-                className={
-                  middle.length === 2
-                    ? i === 0
-                      ? 'sm:pr-10'
-                      : 'sm:pl-10 sm:border-l sm:border-white/12'
-                    : ''
-                }
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.5, delay: 0.08 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <h4 className="font-display text-lg font-semibold text-cream-50 mb-2">{item.title}</h4>
-                <p className="text-primary-200 leading-relaxed">{item.text}</p>
-              </motion.div>
-            ))}
-          </div>
-        )}
+          {/* Bloques intermedios: jerarquía secundaria, dos columnas en desktop */}
+          {middle.length > 0 && (
+            <div className={`grid sm:grid-cols-2 gap-y-8 ${middle.length === 2 ? 'gap-x-0' : 'gap-x-10'}`}>
+              {middle.map((item, i) => (
+                <div
+                  key={item.title}
+                  // Con exactamente dos columnas, un divisor vertical sutil
+                  // hace intencional la diferencia de largo entre ambas.
+                  className={
+                    middle.length === 2
+                      ? i === 0
+                        ? 'sm:pr-10'
+                        : 'sm:pl-10 sm:border-l sm:border-white/12'
+                      : ''
+                  }
+                >
+                  <h4 className="font-display text-lg font-semibold text-cream-50 mb-2">{item.title}</h4>
+                  <p className="text-primary-200 leading-relaxed">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+
+        <div className="h-14 sm:h-16" aria-hidden="true" />
 
         {/* Puente a la conversión: card clara sobre el fondo oscuro — sigue
             siendo el único contenedor con borde de acento de toda la página.
