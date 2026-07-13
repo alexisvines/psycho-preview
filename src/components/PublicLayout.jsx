@@ -5,6 +5,7 @@ import Lenis from 'lenis'
 import { Menu, X, Sun, Moon } from 'lucide-react'
 import { BrandMark } from './ui/BrandMark'
 import { Button } from './ui/Button'
+import { WhatsAppButton } from './ui/WhatsAppButton'
 import { useTheme } from '@/context/ThemeContext'
 import { pageVariants } from '@/lib/motion'
 
@@ -15,6 +16,11 @@ const anchors = [
   { label: 'Cómo funciona', href: '#como-funciona' },
   { label: 'Contacto', href: '#contacto' },
 ]
+
+// Mismo teléfono que la línea de contacto (fallbacks.js) — fijo acá, no
+// viene del CMS, mismo criterio que GOOGLE_REVIEWS_URL en
+// TestimonialsMarquee.jsx.
+const WHATSAPP_PHONE = '+56 9 5407 2852'
 
 export default function PublicLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -244,6 +250,15 @@ export default function PublicLayout() {
           </div>
         </div>
       </footer>
+
+      {/* Solo en el landing: en /reservar la barra de "Continuar" queda
+          sticky al fondo en mobile, y un botón flotante ahí competiría con
+          ella (mismo tipo de choque que el bug de "El espacio"/wizard ya
+          corregido) — además, en medio de la reserva no conviene ofrecer
+          una salida alternativa. */}
+      {isLanding && (
+        <WhatsAppButton phone={WHATSAPP_PHONE} message="Hola Felipe, te escribo desde tu sitio web." className="bottom-5 right-5 sm:bottom-6 sm:right-6" />
+      )}
     </div>
   )
 }
