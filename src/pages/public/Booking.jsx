@@ -219,8 +219,8 @@ export default function Booking() {
                       type="text"
                       {...register('patientName')}
                       placeholder="María González"
-                      className={`w-full px-4 py-2 border rounded-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 bg-white text-stone-900 placeholder-stone-400 ${
-                        errors.patientName ? 'border-rose-500' : 'border-stone-200'
+                      className={`w-full px-4 py-2 border rounded-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 bg-surface text-stone-900 placeholder-stone-400 ${
+                        errors.patientName ? 'border-rose-500' : 'border-line/15'
                       }`}
                     />
                     {errors.patientName && (
@@ -235,8 +235,8 @@ export default function Booking() {
                         type="email"
                         {...register('patientEmail')}
                         placeholder="tu@email.com"
-                        className={`w-full px-4 py-2 border rounded-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 bg-white text-stone-900 placeholder-stone-400 ${
-                          errors.patientEmail ? 'border-rose-500' : 'border-stone-200'
+                        className={`w-full px-4 py-2 border rounded-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 bg-surface text-stone-900 placeholder-stone-400 ${
+                          errors.patientEmail ? 'border-rose-500' : 'border-line/15'
                         }`}
                       />
                       {errors.patientEmail && (
@@ -249,8 +249,8 @@ export default function Booking() {
                         type="tel"
                         {...register('patientPhone')}
                         placeholder="+56 9 1234 5678"
-                        className={`w-full px-4 py-2 border rounded-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 bg-white text-stone-900 placeholder-stone-400 ${
-                          errors.patientPhone ? 'border-rose-500' : 'border-stone-200'
+                        className={`w-full px-4 py-2 border rounded-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 bg-surface text-stone-900 placeholder-stone-400 ${
+                          errors.patientPhone ? 'border-rose-500' : 'border-line/15'
                         }`}
                       />
                       {errors.patientPhone && (
@@ -267,21 +267,21 @@ export default function Booking() {
                       {...register('reasonForConsult')}
                       rows={3}
                       placeholder="Cuéntame brevemente qué te gustaría trabajar"
-                      className="w-full px-4 py-2 border border-stone-200 rounded-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 bg-white text-stone-900 placeholder-stone-400 resize-none"
+                      className="w-full px-4 py-2 border border-line/15 rounded-lg focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 bg-surface text-stone-900 placeholder-stone-400 resize-none"
                     />
                   </div>
 
                   <ul className="grid sm:grid-cols-3 gap-3 pt-2">
                     <li className="flex items-start gap-2 text-xs text-stone-500">
-                      <Lock size={14} className="text-primary-500 shrink-0 mt-0.5" />
+                      <Lock size={14} className="text-primary-500 dark:text-primary-300 shrink-0 mt-0.5" />
                       Todo lo que escribas es confidencial
                     </li>
                     <li className="flex items-start gap-2 text-xs text-stone-500">
-                      <Wallet size={14} className="text-primary-500 shrink-0 mt-0.5" />
+                      <Wallet size={14} className="text-primary-500 dark:text-primary-300 shrink-0 mt-0.5" />
                       Sin pago online — pagas en la consulta
                     </li>
                     <li className="flex items-start gap-2 text-xs text-stone-500">
-                      <MailCheck size={14} className="text-primary-500 shrink-0 mt-0.5" />
+                      <MailCheck size={14} className="text-primary-500 dark:text-primary-300 shrink-0 mt-0.5" />
                       Te llegará un email para confirmar tu hora — tienes 2 horas
                     </li>
                   </ul>
@@ -326,7 +326,7 @@ export default function Booking() {
           paso 3, cuyo submit vive dentro del <form> de arriba). */}
       {step < 3 && (
         <div className="fixed lg:static bottom-0 left-0 right-0 z-20 lg:z-auto lg:mt-8 lg:flex lg:justify-end">
-          <div className="bg-white/95 backdrop-blur border-t border-stone-200 lg:bg-transparent lg:border-0 lg:backdrop-blur-none px-4 py-3 lg:p-0">
+          <div className="bg-surface/95 backdrop-blur border-t border-stone-200 lg:bg-transparent lg:border-0 lg:backdrop-blur-none px-4 py-3 lg:p-0">
             <Button type="button" variant="primary" size="lg" className="w-full lg:w-auto" onClick={handleContinue}>
               Continuar
               <ArrowRight size={18} className="ml-1.5" />
@@ -336,7 +336,7 @@ export default function Booking() {
       )}
 
       {step === 3 && (
-        <div className="fixed lg:hidden bottom-0 left-0 right-0 z-20 bg-white/95 backdrop-blur border-t border-stone-200 px-4 py-3">
+        <div className="fixed lg:hidden bottom-0 left-0 right-0 z-20 bg-surface/95 backdrop-blur border-t border-stone-200 px-4 py-3">
           <Button
             type="button"
             variant="primary"

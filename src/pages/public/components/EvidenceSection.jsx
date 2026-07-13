@@ -113,7 +113,7 @@ export default function EvidenceSection({ title, body }) {
   return (
     <motion.section
       id="evidencia"
-      className="relative bg-gradient-to-b from-primary-50/70 via-cream to-primary-50/40 border-y border-primary-100/70 scroll-mt-20"
+      className="relative bg-gradient-to-b from-cream-100/70 via-cream to-cream-100/40 border-y border-line/10 scroll-mt-20"
       {...sectionReveal}
     >
       <WatercolorWash />

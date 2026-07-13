@@ -23,7 +23,7 @@ function SummaryRow({ label, value, icon: Icon, onEdit }) {
         <button
           type="button"
           onClick={onEdit}
-          className="shrink-0 inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700 mt-0.5"
+          className="shrink-0 inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-300 dark:hover:text-primary-200 mt-0.5"
         >
           <Pencil size={11} /> Editar
         </button>
@@ -46,7 +46,7 @@ export default function BookingSummaryPanel({ sessionType, selectedSlot, onEdit,
   return (
     <div className={variant === 'sidebar' ? 'lg:sticky lg:top-24' : ''}>
       <div
-        className={`rounded-2xl border border-primary-900/10 bg-surface p-5 sm:p-6 ${
+        className={`rounded-2xl border border-line/10 bg-surface p-5 sm:p-6 ${
           variant === 'sidebar' ? 'shadow-card' : 'shadow-sm'
         }`}
       >

@@ -30,9 +30,20 @@ export const LOGOS = [
 
 const ThemeContext = createContext(null)
 
+// Modo claro/oscuro: a diferencia de palette/logo (herramientas de decisión
+// de ESTE repo de vista previa), este SÍ es un feature real del sitio — el
+// valor inicial respeta prefers-color-scheme del sistema si el visitante
+// nunca lo tocó, y una vez que elige queda fijo (persistido) en esa sesión.
+function getInitialMode() {
+  const saved = localStorage.getItem('theme-mode')
+  if (saved === 'light' || saved === 'dark') return saved
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
 export function ThemeProvider({ children }) {
   const [palette, setPalette] = useState(() => localStorage.getItem('demo-palette') || 'current')
   const [logoVariant, setLogoVariant] = useState(() => localStorage.getItem('demo-logo') || 'cuenco')
+  const [mode, setMode] = useState(getInitialMode)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-palette', palette)
@@ -43,8 +54,20 @@ export function ThemeProvider({ children }) {
     localStorage.setItem('demo-logo', logoVariant)
   }, [logoVariant])
 
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', mode)
+    // Clase "dark" en paralelo al atributo: el atributo alimenta las
+    // variables CSS (cream/surface/stone/line, ver index.css), la clase
+    // habilita los `dark:` puntuales de Tailwind para los pocos casos que
+    // necesitan un valor distinto en vez de una inversión automática.
+    document.documentElement.classList.toggle('dark', mode === 'dark')
+    localStorage.setItem('theme-mode', mode)
+  }, [mode])
+
+  const toggleMode = () => setMode((m) => (m === 'dark' ? 'light' : 'dark'))
+
   return (
-    <ThemeContext.Provider value={{ palette, setPalette, logoVariant, setLogoVariant }}>
+    <ThemeContext.Provider value={{ palette, setPalette, logoVariant, setLogoVariant, mode, toggleMode }}>
       {children}
     </ThemeContext.Provider>
   )

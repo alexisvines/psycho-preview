@@ -25,12 +25,40 @@ const accent = Object.fromEntries(
     withOpacity(`--color-accent-${s}`),
   ])
 )
+// stone: mismo mecanismo que primary/accent, pero para el gris neutro de
+// texto/bordes/fondos de página. En Tailwind por defecto "stone" es una
+// escala fija — acá la reemplazamos por una respaldada en variable CSS para
+// que TODO el texto/borde/fondo neutro del sitio (la inmensa mayoría de las
+// clases text-stone-*/bg-stone-*/border-stone-* ya escritas) se invierta
+// solo al activar modo oscuro ([data-theme="dark"] en index.css), sin tener
+// que tocar cada componente uno por uno.
+const stone = Object.fromEntries(
+  [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((s) => [
+    s,
+    withOpacity(`--color-stone-${s}`),
+  ])
+)
+// line: el tinte de borde translúcido (antes literal border-primary-900/N)
+// separado de la escala primary porque primary-900 cumple doble función —
+// bloque de color sólido (paneles oscuros) Y tinte de borde — y esas dos
+// funciones necesitan invertirse distinto en modo oscuro. "line" solo
+// resuelve el borde.
+const line = withOpacity('--color-line')
 
 export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  // Modo oscuro: la mayoría de los ajustes de contraste ya vienen gratis de
+  // invertir cream/surface/stone/line por variable CSS (arriba). La clase
+  // "dark" (aplicada en <html> junto con [data-theme="dark"], ver
+  // ThemeContext.jsx) solo se usa como escape hatch puntual — texto en
+  // primary-500/600/700 que asume lectura sobre el papel claro y no tiene
+  // suficiente contraste sobre el nuevo canvas oscuro (primary/accent NO se
+  // invierten: son el color de marca, siguen siendo bloques de panel
+  // oscuro sólidos en ambos modos).
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
@@ -43,6 +71,8 @@ export default {
       colors: {
         primary,
         accent,
+        stone,
+        line,
         cream: {
           DEFAULT: withOpacity('--color-cream-DEFAULT'),
           50: withOpacity('--color-cream-50'),

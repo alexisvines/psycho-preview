@@ -161,7 +161,7 @@ export default function SlotPicker({ selectedSlot, onSelectSlot, showAsap = true
               className={`relative shrink-0 flex flex-col items-center justify-center w-16 h-18 py-2 rounded-xl border transition-colors ${
                 isSelected
                   ? 'bg-primary-600 border-primary-600 text-white'
-                  : 'bg-white border-stone-200 text-stone-700 hover:border-primary-300'
+                  : 'bg-surface border-line/10 text-stone-700 hover:border-primary-300'
               }`}
             >
               <span className="text-xs uppercase font-medium opacity-80">
@@ -172,7 +172,7 @@ export default function SlotPicker({ selectedSlot, onSelectSlot, showAsap = true
                 <span
                   data-testid="slot-picker-dot"
                   className={`absolute bottom-1.5 h-1.5 w-1.5 rounded-full ${
-                    status === 'has' ? 'bg-primary-500' : isSelected ? 'bg-white/50' : 'bg-stone-300'
+                    status === 'has' ? 'bg-primary-500' : isSelected ? 'bg-white/50' : 'bg-line/20'
                   }`}
                 />
               )}
@@ -230,7 +230,7 @@ function SlotGroup({ label, icon: Icon, slots, selectedSlot, onSelectSlot }) {
   if (slots.length === 0) return null
   return (
     <div>
-      <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-stone-500 mb-2.5">
+      <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-primary-600 dark:text-primary-300 mb-2.5">
         <Icon size={13} /> {label}
       </div>
       <motion.div
@@ -251,7 +251,7 @@ function SlotGroup({ label, icon: Icon, slots, selectedSlot, onSelectSlot }) {
               className={`px-3 py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                 isSelected
                   ? 'bg-primary-600 border-primary-600 text-white'
-                  : 'bg-white border-stone-200 text-stone-700 hover:border-primary-300 hover:bg-primary-50'
+                  : 'bg-surface border-line/10 text-stone-700 hover:border-primary-300 hover:bg-primary-50'
               }`}
             >
               {slot.timeLabel}

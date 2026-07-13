@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Lenis from 'lenis'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Sun, Moon } from 'lucide-react'
 import { BrandMark } from './ui/BrandMark'
 import { Button } from './ui/Button'
 import { useTheme } from '@/context/ThemeContext'
+import { pageVariants } from '@/lib/motion'
 
 const anchors = [
   { label: 'Sobre mí', href: '#sobre-mi' },
@@ -22,7 +23,7 @@ export default function PublicLayout() {
   const navigate = useNavigate()
   const isLanding = location.pathname === '/'
   const lenisRef = useRef(null)
-  const { logoVariant } = useTheme()
+  const { logoVariant, mode, toggleMode } = useTheme()
 
   // Smooth scroll (Lenis): desactivado por completo si el usuario prefiere
   // menos movimiento. Loop propio vía requestAnimationFrame, destruido al
@@ -96,13 +97,13 @@ export default function PublicLayout() {
             {/* El wordmark "fecard" ya dice el nombre — repetirlo al lado
                 sería redundante (y competiría con su propia caligrafía). */}
             {logoVariant === 'fecard' ? (
-              <span className="hidden sm:inline not-italic text-xs font-sans tracking-[0.18em] uppercase text-primary-700 align-middle">
+              <span className="hidden sm:inline not-italic text-xs font-sans tracking-[0.18em] uppercase text-primary-700 dark:text-primary-300 align-middle">
                 Psicólogo
               </span>
             ) : (
               <span className="font-display italic text-xl text-stone-900 leading-tight">
                 Felipe Caro{' '}
-                <span className="hidden sm:inline not-italic text-xs font-sans tracking-[0.18em] uppercase text-primary-700 align-middle ml-1">
+                <span className="hidden sm:inline not-italic text-xs font-sans tracking-[0.18em] uppercase text-primary-700 dark:text-primary-300 align-middle ml-1">
                   Psicólogo
                 </span>
               </span>
@@ -116,7 +117,7 @@ export default function PublicLayout() {
                 key={a.href}
                 href={a.href}
                 onClick={(e) => handleAnchorClick(e, a.href)}
-                className="group relative text-sm font-medium text-stone-600 hover:text-primary-700 transition-colors py-1"
+                className="group relative text-sm font-medium text-stone-600 hover:text-primary-700 dark:hover:text-primary-300 transition-colors py-1"
               >
                 {a.label}
                 <span className="absolute left-1/2 -bottom-0.5 h-px w-0 -translate-x-1/2 bg-primary-600 transition-all duration-300 ease-out group-hover:w-full" />
@@ -124,20 +125,31 @@ export default function PublicLayout() {
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-4">
-            <Link to="/reservar">
-              <Button variant="outline" size="sm">Reservar hora</Button>
-            </Link>
-          </div>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={toggleMode}
+              className="p-2 rounded-lg text-stone-500 hover:text-primary-700 hover:bg-stone-100 transition-colors"
+              aria-label={mode === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+              title={mode === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+            >
+              {mode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
 
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden p-2 text-stone-600 hover:bg-stone-100 rounded-lg transition-colors"
-            onClick={() => setMenuOpen((v) => !v)}
-            aria-label="Abrir menú"
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+            <div className="hidden md:block">
+              <Link to="/reservar">
+                <Button variant="outline" size="sm">Reservar hora</Button>
+              </Link>
+            </div>
+
+            {/* Mobile menu button */}
+            <button
+              className="md:hidden p-2 text-stone-600 hover:bg-stone-100 rounded-lg transition-colors"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label="Abrir menú"
+            >
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile nav */}
@@ -174,9 +186,16 @@ export default function PublicLayout() {
         </header>
       </div>
 
-      {/* Page content */}
+      {/* Page content: cortinilla breve entre Landing y Reservar — antes el
+          cambio de ruta era un corte seco; con AnimatePresence + pageVariants
+          (ya definido en lib/motion.js pero sin usar) hay una continuidad
+          visual mínima, coherente con el resto del motion del sitio. */}
       <main className="flex-1">
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div key={location.pathname} variants={pageVariants} initial="initial" animate="animate" exit="exit">
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Footer: zona utilitaria, no otra sección de venta — los datos de
