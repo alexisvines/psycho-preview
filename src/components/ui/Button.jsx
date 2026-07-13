@@ -10,10 +10,10 @@ export function Button({
   className = '',
   ...props
 }) {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus-visible:outline-none';
+  const baseClasses = 'inline-flex items-center justify-center font-semibold tracking-[0.01em] rounded-lg transition-colors focus-visible:outline-none';
 
   const variantClasses = {
-    primary: 'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50',
+    primary: 'bg-primary-600 text-white shadow-button hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50',
     secondary: 'bg-stone-100 text-stone-900 hover:bg-stone-200 active:bg-stone-300 disabled:opacity-50',
     ghost: 'bg-transparent text-stone-700 hover:bg-stone-100 active:bg-stone-200 disabled:opacity-50',
     outline: 'border border-primary-300 bg-transparent text-primary-700 hover:bg-primary-50 active:bg-primary-100 disabled:opacity-50',

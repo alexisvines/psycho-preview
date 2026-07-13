@@ -18,7 +18,7 @@ export function SectionHeading({ label, children, align = 'left', className = ''
   return (
     <div className={align === 'center' ? 'text-center' : ''}>
       {label && <SectionLabel align={align}>{label}</SectionLabel>}
-      <Tag className={`font-display text-3xl sm:text-4xl font-medium text-stone-900 leading-[1.1] tracking-tight ${className}`}>
+      <Tag className={`font-display text-3xl sm:text-4xl font-semibold text-stone-900 leading-[1.1] tracking-tight ${className}`}>
         {children}
       </Tag>
     </div>

@@ -1,4 +1,31 @@
 /** @type {import('tailwindcss').Config} */
+
+// Genera un color Tailwind "vivo": lee su valor de una variable CSS que
+// cambia con [data-palette] (definidas en src/index.css), así el botón de
+// ThemeSwitcher.jsx puede cambiar TODA la paleta del sitio en runtime sin
+// recompilar — cada clase bg-primary-600, text-accent-500/70, etc. sigue
+// funcionando (incluido el modificador de opacidad "/N") porque la variable
+// guarda el triplete "R G B" sin comas, no un hex.
+function withOpacity(variableName) {
+  return ({ opacityValue }) =>
+    opacityValue === undefined
+      ? `rgb(var(${variableName}))`
+      : `rgb(var(${variableName}) / ${opacityValue})`
+}
+
+const primary = Object.fromEntries(
+  [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((s) => [
+    s,
+    withOpacity(`--color-primary-${s}`),
+  ])
+)
+const accent = Object.fromEntries(
+  [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((s) => [
+    s,
+    withOpacity(`--color-accent-${s}`),
+  ])
+)
+
 export default {
   content: [
     "./index.html",
@@ -7,57 +34,35 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['"Fraunces Variable"', 'Georgia', 'serif'],
+        // Instrument Sans: cuerpo/UI — más carácter que Inter sin perder sobriedad.
+        sans: ['"Instrument Sans Variable"', 'system-ui', 'sans-serif'],
+        // Newsreader: serif editorial (eje óptico), reemplaza a Fraunces —
+        // la itálica queda reservada para un único uso (la cita del hero).
+        display: ['"Newsreader Variable"', 'Georgia', 'serif'],
       },
       colors: {
-        // "Salvia y arena": escala verde salvia cálida (reemplaza el teal
-        // anterior). Anclas de diseño: 500 ≈ #6B7F5E (tono base), 700 ≈
-        // #4A5D42 (CTAs, texto sobre crema), 950 verde-marrón muy oscuro y
-        // cálido (footer) — nunca un verde-negro frío.
-        primary: {
-          50: '#f6f7f1',
-          100: '#eaeee1',
-          200: '#d5dcc3',
-          300: '#b7c49e',
-          400: '#94a878',
-          500: '#6b7f5e',
-          600: '#586b4c',
-          700: '#4a5d42',
-          800: '#3b4a35',
-          900: '#2f3b2a',
-          950: '#1c2318',
-        },
-        // Terracota: acento cálido para pull-stats, detalles de énfasis y
-        // el borde de la card "puente a conversión" de la sección de enfoque.
-        accent: {
-          50: '#fbf2ec',
-          100: '#f6e2d3',
-          200: '#edc5a8',
-          300: '#e1a379',
-          400: '#d38e5f',
-          500: '#c4764a',
-          600: '#a85f39',
-          700: '#87492c',
-          800: '#6b3922',
-          900: '#57301d',
-          950: '#2e180e',
-        },
-        // Crema base unificado: reemplaza los hex sueltos (#fbf7f0, #faf5ec…)
-        // repetidos en Landing/TestimonialsMarquee/EvidenceSection.
+        primary,
+        accent,
         cream: {
-          DEFAULT: '#faf6ef',
-          50: '#faf6ef',
-          100: '#f3ede2',
+          DEFAULT: withOpacity('--color-cream-DEFAULT'),
+          50: withOpacity('--color-cream-50'),
+          100: withOpacity('--color-cream-100'),
         },
+        // Blanco cálido para cards elevadas: sobre un papel ya entonado
+        // (nunca blanco puro), esto es lo que hace que una card "se despegue".
+        surface: withOpacity('--color-surface'),
         success: '#10b981',
         warning: '#f59e0b',
         danger: '#ef4444',
         info: '#0ea5e9',
       },
       boxShadow: {
-        card: '0 1px 2px rgb(0 0 0 / 0.04), 0 4px 12px rgb(0 0 0 / 0.05)',
-        'card-hover': '0 2px 4px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08)',
+        // Sombras tintadas con la tinta de la paleta activa (no negro
+        // neutro): las de 4-5% de negro eran invisibles sobre papel cálido.
+        card: '0 1px 2px rgb(var(--color-primary-950) / 0.06), 0 6px 16px -4px rgb(var(--color-primary-950) / 0.10)',
+        'card-hover': '0 2px 4px rgb(var(--color-primary-950) / 0.07), 0 16px 32px -8px rgb(var(--color-primary-950) / 0.16)',
+        lifted: '0 24px 48px -16px rgb(var(--color-primary-950) / 0.28)',
+        button: '0 1px 2px rgb(var(--color-primary-950) / 0.10), inset 0 1px 0 rgb(255 255 255 / 0.12)',
       },
       keyframes: {
         shimmer: {

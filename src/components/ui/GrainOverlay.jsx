@@ -12,7 +12,7 @@ const GRAIN_SVG = `<svg xmlns='http://www.w3.org/2000/svg' width='120' height='1
 
 const GRAIN_DATA_URI = `url("data:image/svg+xml,${encodeURIComponent(GRAIN_SVG)}")`;
 
-export function GrainOverlay({ className = '' }) {
+export function GrainOverlay({ className = '', opacity = 0.04, blend = 'multiply' }) {
   return (
     <div
       className={`pointer-events-none absolute inset-0 ${className}`}
@@ -20,8 +20,8 @@ export function GrainOverlay({ className = '' }) {
       style={{
         backgroundImage: GRAIN_DATA_URI,
         backgroundRepeat: 'repeat',
-        opacity: 0.04,
-        mixBlendMode: 'multiply',
+        opacity,
+        mixBlendMode: blend,
       }}
     />
   );

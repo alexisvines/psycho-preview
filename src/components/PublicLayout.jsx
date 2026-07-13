@@ -5,6 +5,7 @@ import Lenis from 'lenis'
 import { Menu, X } from 'lucide-react'
 import { BrandMark } from './ui/BrandMark'
 import { Button } from './ui/Button'
+import { useTheme } from '@/context/ThemeContext'
 
 const anchors = [
   { label: 'Sobre mí', href: '#sobre-mi' },
@@ -21,6 +22,7 @@ export default function PublicLayout() {
   const navigate = useNavigate()
   const isLanding = location.pathname === '/'
   const lenisRef = useRef(null)
+  const { logoVariant } = useTheme()
 
   // Smooth scroll (Lenis): desactivado por completo si el usuario prefiere
   // menos movimiento. Loop propio vía requestAnimationFrame, destruido al
@@ -80,7 +82,7 @@ export default function PublicLayout() {
       <div className="sticky top-0 z-40">
         {/* Header: glassmorphism real (blur + fondo semitransparente + borde
             inferior sutil) una vez que se hizo scroll; transparente sobre el
-            hero para no competir con el MeshGradient. */}
+            hero para no competir con su panel de color. */}
         <header
           className={`transition-[background-color,backdrop-filter,border-color] duration-300 ${
             scrolled
@@ -90,13 +92,21 @@ export default function PublicLayout() {
         >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link to="/" className="group flex items-center gap-2.5 shrink-0">
-            <BrandMark size={34} interactive />
-            <span className="font-display italic text-xl text-stone-900 leading-tight">
-              Felipe Caro{' '}
-              <span className="hidden sm:inline not-italic text-xs font-sans tracking-[0.18em] uppercase text-primary-700 align-middle ml-1">
+            <BrandMark size={34} interactive variant={logoVariant} />
+            {/* El wordmark "fecard" ya dice el nombre — repetirlo al lado
+                sería redundante (y competiría con su propia caligrafía). */}
+            {logoVariant === 'fecard' ? (
+              <span className="hidden sm:inline not-italic text-xs font-sans tracking-[0.18em] uppercase text-primary-700 align-middle">
                 Psicólogo
               </span>
-            </span>
+            ) : (
+              <span className="font-display italic text-xl text-stone-900 leading-tight">
+                Felipe Caro{' '}
+                <span className="hidden sm:inline not-italic text-xs font-sans tracking-[0.18em] uppercase text-primary-700 align-middle ml-1">
+                  Psicólogo
+                </span>
+              </span>
+            )}
           </Link>
 
           {/* Desktop nav: subrayado animado on hover/focus (crece desde el centro) */}
@@ -178,8 +188,10 @@ export default function PublicLayout() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-8">
           <div>
             <div className="flex items-center gap-2.5 mb-3">
-              <BrandMark size={30} tone="negative" />
-              <span className="font-display italic text-lg font-medium text-white">Felipe Caro</span>
+              <BrandMark size={30} tone="negative" variant={logoVariant} />
+              {logoVariant !== 'fecard' && (
+                <span className="font-display italic text-lg font-medium text-white">Felipe Caro</span>
+              )}
             </div>
             <p className="text-sm text-primary-300 leading-relaxed max-w-xs">
               Acompañamiento psicológico profesional, cercano y confidencial. Un espacio propio para

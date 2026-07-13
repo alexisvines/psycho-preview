@@ -1,7 +1,7 @@
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { MapPin, Star, Pencil } from 'lucide-react'
-import felipePortrait from '@/assets/felipe.jpg'
+import felipePortrait from '@/assets/felipe-whatsapp.jpg'
 import { getSlotDurationMinutes } from '../bookingWizard'
 
 function capitalize(text) {
@@ -46,7 +46,7 @@ export default function BookingSummaryPanel({ sessionType, selectedSlot, onEdit,
   return (
     <div className={variant === 'sidebar' ? 'lg:sticky lg:top-24' : ''}>
       <div
-        className={`rounded-2xl border border-stone-200/70 bg-white p-5 sm:p-6 ${
+        className={`rounded-2xl border border-primary-900/10 bg-surface p-5 sm:p-6 ${
           variant === 'sidebar' ? 'shadow-card' : 'shadow-sm'
         }`}
       >
@@ -55,6 +55,7 @@ export default function BookingSummaryPanel({ sessionType, selectedSlot, onEdit,
             src={felipePortrait}
             alt="Felipe Caro"
             className="h-12 w-12 rounded-full object-cover ring-2 ring-primary-100"
+            style={{ objectPosition: '50% 10%' }}
           />
           <div>
             <p className="font-display text-base font-medium text-stone-900">Felipe Caro</p>

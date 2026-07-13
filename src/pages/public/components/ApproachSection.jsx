@@ -2,9 +2,8 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { sectionReveal } from '@/lib/motion'
-import { SectionHeading } from './SectionHeading'
+import { SectionHeading, SectionLabel } from './SectionHeading'
 import { Button } from '@/components/ui/Button'
-import { WatercolorWash } from '@/components/ui/WatercolorWash'
 
 const SEPARATOR = ' — '
 
@@ -44,19 +43,23 @@ export default function ApproachSection({ title, body }) {
   const middle = closing ? rest.slice(0, -1) : rest
 
   return (
+    // Segundo bloque de color real de la página (el primero es el panel del
+    // hero): esta es la sección de tesis del sitio ("¿qué es el
+    // psicoanálisis?"), merece el peso visual de un fondo oscuro real, no
+    // otro tramo de papel casi blanco.
     <motion.section
       id="psicoanalisis"
-      className="relative bg-cream/60 border-y border-stone-200/60 scroll-mt-20"
+      className="relative bg-primary-900 scroll-mt-20"
       {...sectionReveal}
     >
-      <WatercolorWash />
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
-        <SectionHeading label="El enfoque" className="mb-10">
+        <SectionLabel>El enfoque</SectionLabel>
+        <h2 className="font-display text-3xl sm:text-4xl font-semibold text-cream-50 leading-[1.1] tracking-tight mb-10">
           {title}
-        </SectionHeading>
+        </h2>
 
         {/* Intro destacada: el título del bloque CMS va como run-in heading
-            (arranque en Fraunces itálica dentro del párrafo lead) — evita
+            (arranque en Newsreader itálica dentro del párrafo lead) — evita
             apilar un tercer nivel de título bajo el eyebrow y el h2. */}
         {intro && (
           <motion.div
@@ -66,8 +69,8 @@ export default function ApproachSection({ title, body }) {
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="text-lg sm:text-xl text-stone-600 leading-relaxed">
-              <span className="font-display italic text-2xl sm:text-[1.65rem] text-stone-900 mr-2">
+            <p className="text-lg sm:text-xl text-primary-200 leading-relaxed">
+              <span className="font-display italic text-2xl sm:text-[1.65rem] text-cream-50 mr-2">
                 {intro.title}.
               </span>
               {intro.text}
@@ -87,7 +90,7 @@ export default function ApproachSection({ title, body }) {
                   middle.length === 2
                     ? i === 0
                       ? 'sm:pr-10'
-                      : 'sm:pl-10 sm:border-l sm:border-stone-200/70'
+                      : 'sm:pl-10 sm:border-l sm:border-white/12'
                     : ''
                 }
                 initial={{ opacity: 0, y: 16 }}
@@ -95,25 +98,26 @@ export default function ApproachSection({ title, body }) {
                 viewport={{ once: true, margin: '-80px' }}
                 transition={{ duration: 0.5, delay: 0.08 + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
               >
-                <h4 className="font-display text-lg font-medium text-stone-900 mb-2">{item.title}</h4>
-                <p className="text-stone-600 leading-relaxed">{item.text}</p>
+                <h4 className="font-display text-lg font-semibold text-cream-50 mb-2">{item.title}</h4>
+                <p className="text-primary-200 leading-relaxed">{item.text}</p>
               </motion.div>
             ))}
           </div>
         )}
 
-        {/* Puente a la conversión: card cálida, borde terracota sutil, CTA */}
+        {/* Puente a la conversión: card clara sobre el fondo oscuro — sigue
+            siendo el único contenedor con borde de acento de toda la página. */}
         {closing && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="rounded-2xl border border-accent-300/60 bg-accent-50/70 p-7 sm:p-9"
+            className="rounded-2xl border border-accent-400/50 bg-surface p-7 sm:p-9 shadow-lifted"
           >
             <div className="grid sm:grid-cols-[1fr_auto] gap-6 items-center">
               <div>
-                <h4 className="font-display text-xl sm:text-2xl font-medium text-stone-900 mb-2">
+                <h4 className="font-display text-xl sm:text-2xl font-semibold text-stone-900 mb-2">
                   {closing.title}
                 </h4>
                 <p className="text-stone-700 leading-relaxed max-w-xl">{closing.text}</p>

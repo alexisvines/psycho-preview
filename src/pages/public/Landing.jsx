@@ -20,7 +20,7 @@ import {
   ScrollText,
   Award,
 } from 'lucide-react'
-import felipePortrait from '@/assets/felipe.jpg'
+import felipePortrait from '@/assets/felipe-whatsapp.jpg'
 import felipeSobre from '@/assets/felipe-sobre.jpg'
 import espacio1 from '@/assets/espacio-1.jpg'
 import espacio2 from '@/assets/espacio-2.jpg'
@@ -34,7 +34,6 @@ import { Button } from '@/components/ui/Button'
 import { CardContent } from '@/components/ui/Card'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { BentoGrid, BentoCard } from '@/components/ui/BentoGrid'
-import { MeshGradient } from '@/components/ui/MeshGradient'
 import { GrainOverlay } from '@/components/ui/GrainOverlay'
 import {
   staggerContainer,
@@ -55,17 +54,17 @@ function serviceIcon(name = '') {
   return Sparkles
 }
 
-// Titular del hero, palabra por palabra, con reveal en cascada (fade + y +
-// blur) al montar. La última palabra queda envuelta en un <span> con un
-// leve juego de font-variation-settings (peso) al hover, como guiño a que
-// Fraunces es una variable font — sutil, no distrae del contenido.
+// Titular del hero, palabra por palabra, con reveal en cascada (fade + y)
+// al montar. Peso 600 real (no 500): una serif variable en peso medio a
+// tamaño display se ve blanda — el contraste de peso es lo que lee como
+// "cuidado", no la itálica ni el efecto de hover.
 function HeroHeadline({ text }) {
   const shouldReduceMotion = useReducedMotion()
   const words = text.split(' ')
 
   return (
     <motion.h1
-      className="font-display text-5xl sm:text-6xl lg:text-7xl font-medium text-stone-900 leading-[1.05] tracking-tight"
+      className="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold text-stone-900 leading-[1.05] tracking-tight"
       variants={wordRevealContainer(shouldReduceMotion)}
       initial="initial"
       animate="animate"
@@ -76,20 +75,9 @@ function HeroHeadline({ text }) {
           <motion.span
             key={i}
             variants={wordRevealItem(shouldReduceMotion)}
-            className="inline-block mr-[0.28em]"
+            className={`inline-block mr-[0.28em] ${isLast ? 'text-primary-700' : ''}`}
           >
-            {isLast ? (
-              <motion.span
-                className="inline-block text-primary-700"
-                whileHover={shouldReduceMotion ? undefined : { fontVariationSettings: '"wght" 560' }}
-                style={{ fontVariationSettings: '"wght" 500' }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-              >
-                {word}
-              </motion.span>
-            ) : (
-              word
-            )}
+            {word}
           </motion.span>
         )
       })}
@@ -135,7 +123,7 @@ const CONSULT_REASONS = [
 function TrustBar() {
   return (
     <motion.section
-      className="border-b border-stone-200/70 bg-stone-50/60"
+      className="border-b border-primary-900/10 bg-cream-100"
       {...sectionReveal}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-7">
@@ -231,7 +219,7 @@ function HowItWorksSection({ title, steps }) {
   return (
     <motion.section
       id="como-funciona"
-      className="bg-primary-50/60 border-y border-primary-100 scroll-mt-20"
+      className="bg-cream-100 border-y border-primary-900/10 scroll-mt-20"
       {...sectionReveal}
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
@@ -382,14 +370,17 @@ export default function Landing() {
 
   return (
     <div className={isLoading ? 'opacity-90' : ''}>
-      {/* Hero: composición broken-grid (titular editorial a la izquierda,
-          forma orgánica "retrato" desplazada a la derecha) sobre un fondo
-          atmosférico de MeshGradient + grano sutil. */}
-      <section className="relative overflow-x-hidden border-b border-stone-200/60">
-        <MeshGradient />
-        <GrainOverlay />
+      {/* Hero: titular editorial a la izquierda, placa de retrato rectangular
+          montada sobre un panel de color sólido a la derecha (bloque real,
+          no atmósfera difusa). */}
+      <section className="relative overflow-x-hidden border-b border-primary-900/10">
+        {/* Bloque de color real (no atmósfera difusa): panel oscuro que
+            ocupa el 42% derecho en desktop — el primer viewport ya tiene
+            cuerpo de color, no solo detalle sobre papel casi blanco. */}
+        <div aria-hidden="true" className="absolute inset-y-0 right-0 w-[42%] bg-primary-800 hidden lg:block" />
+
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 lg:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
             {/* Columna de texto */}
             <div className="lg:col-span-7 lg:pr-4">
               <HeroHeadline text={content.hero.title} />
@@ -407,28 +398,11 @@ export default function Landing() {
                 ))}
               </motion.div>
 
-              {/* Acento poético: identidad de marca — Felipe es poeta además
-                  de psicólogo clínico. Separado del resto con un pequeño
-                  ornamento y más aire, para que lea como una cita, no como
-                  una línea más del subtítulo. */}
               <motion.div
-                className="mt-12 sm:mt-14 max-w-md"
+                className="mt-10 flex flex-wrap items-center gap-4"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.62, duration: 0.4 }}
-              >
-                <span aria-hidden="true" className="block h-px w-10 bg-stone-300 mb-4" />
-                <p className="font-display italic text-xl sm:text-2xl text-stone-600 leading-snug">
-                  «Que los puertos rojos inunden las vidas»
-                </p>
-                <span className="block not-italic text-sm text-stone-400 mt-2">— Felipe Caro</span>
-              </motion.div>
-
-              <motion.div
-                className="mt-12 flex flex-wrap items-center gap-4"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.72, duration: 0.4 }}
               >
                 <Link to="/reservar">
                   <motion.span
@@ -437,11 +411,7 @@ export default function Landing() {
                     whileTap={{ scale: 0.97 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 22 }}
                   >
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      className="gap-2 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-[0_8px_28px_-6px_rgba(56,106,89,0.55)]"
-                    >
+                    <Button variant="primary" size="lg" className="gap-2">
                       Reservar hora <ArrowRight size={18} />
                     </Button>
                   </motion.span>
@@ -454,51 +424,67 @@ export default function Landing() {
               </motion.div>
             </div>
 
-            {/* Retrato de Felipe: máscara blob orgánica de verdad —
-                asimétrica, sin ring artificial, con un halo cálido difuso
-                detrás (mismo lenguaje que el halo de "Sobre mí") en vez de
-                un borde blanco duro. Duotone sutil hacia la paleta
-                (grayscale + overlay salvia en mix-blend-mode) para integrarlo
-                a la atmósfera del MeshGradient. Se agranda y respira hacia
-                la franja siguiente con un margen negativo. */}
+            {/* Placa editorial (rectángulo, no blob) montada a caballo sobre
+                el borde del panel de color. Foto: felipeSobre (sentado en el
+                diván, mano en el mentón — pose de escucha), no el selfie
+                frontal de antes. Duotono real: grayscale + capa mix-blend-color
+                que lee --color-primary-700 de la paleta activa (por eso
+                cambia sola con el ThemeSwitcher) + un lavado cálido tenue en
+                soft-light + grano SOLO dentro del marco. La cita del poema
+                vive dentro del panel oscuro, en cream — ya no compite con el
+                titular en la columna de texto. */}
             <motion.div
-              className="lg:col-span-5 flex justify-center lg:justify-end relative z-10 lg:-mb-16"
-              initial={{ opacity: 0, scale: 0.94, y: 10 }}
+              className="lg:col-span-5 flex flex-col items-center lg:items-start relative z-10 lg:pl-4"
+              initial={{ opacity: 0, scale: 0.96, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="relative h-72 w-72 sm:h-96 sm:w-96 lg:h-[26rem] lg:w-[26rem] lg:translate-y-6">
-                {/* Halo: gradiente difuso detrás del blob, sustituye al ring blanco */}
-                <div
-                  aria-hidden="true"
-                  className="absolute -inset-6 sm:-inset-8 -z-10 blur-2xl opacity-80"
+              <div className="relative w-[17rem] sm:w-[20rem] lg:w-[21rem] aspect-[4/5] rounded-xl overflow-hidden shadow-lifted ring-1 ring-inset ring-white/15">
+                <img
+                  src={felipeSobre}
+                  alt="Felipe Caro en su consulta"
+                  width={768}
+                  height={960}
+                  className="h-full w-full object-cover"
                   style={{
-                    background: 'radial-gradient(circle, rgba(196,118,74,0.4) 0%, rgba(107,127,94,0.28) 55%, transparent 75%)',
-                    borderRadius: '58% 42% 45% 55% / 48% 55% 45% 52%',
+                    objectPosition: '50% 20%',
+                    filter: 'grayscale(1) contrast(1.08) brightness(1.03)',
                   }}
                 />
                 <div
-                  className="relative h-full w-full overflow-hidden shadow-[0_30px_80px_-20px_rgba(196,118,74,0.35),0_20px_60px_-15px_rgba(59,74,53,0.4)]"
-                  style={{ borderRadius: '58% 42% 45% 55% / 48% 55% 45% 52%' }}
-                >
-                  {/* Zoom + origen bajo: la foto original (selfie) trae un
-                      póster de Freud y un interruptor de luz en la pared de
-                      fondo; el reencuadre los deja fuera del recorte hasta
-                      tener un retrato profesional (pendiente de Felipe). */}
-                  <img
-                    src={felipePortrait}
-                    alt="Retrato de Felipe Caro, psicólogo clínico"
-                    width={530}
-                    height={530}
-                    className="h-full w-full object-cover grayscale-[15%] contrast-[1.05] scale-[1.22] origin-[56%_100%]"
-                  />
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-0 mix-blend-color"
-                    style={{ background: 'linear-gradient(135deg, #586b4c 0%, #4a5d42 55%, #c4764a 130%)', opacity: 0.28 }}
-                  />
-                </div>
+                  aria-hidden="true"
+                  className="absolute inset-0 pointer-events-none mix-blend-color"
+                  style={{ background: 'rgb(var(--color-primary-700))', opacity: 0.85 }}
+                />
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 pointer-events-none mix-blend-soft-light"
+                  style={{ background: 'rgb(var(--color-accent-400))', opacity: 0.18 }}
+                />
+                <GrainOverlay opacity={0.07} blend="overlay" />
               </div>
+
+              {/* Acento poético: dentro del panel de color, en cream sobre
+                  oscuro — lee como una cita real, no como otra línea de
+                  subtítulo compitiendo con el h1. */}
+              <motion.div
+                className="mt-8 max-w-xs lg:max-w-[21rem]"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.62, duration: 0.4 }}
+              >
+                <span aria-hidden="true" className="block h-px w-10 bg-accent-400/60 mb-4" />
+                <p className="font-display italic text-lg sm:text-xl text-stone-800 lg:text-cream-50 leading-snug">
+                  «Que los puertos rojos inunden las vidas»
+                </p>
+                {/* Firma real de Felipe como poeta ("Permanentes", en su sitio
+                    de difusión poética) — más auténtico que atribuirlo a
+                    "Felipe Caro" a secas, y queda contenido a este detalle:
+                    no se usa como marca del sitio clínico. */}
+                <span className="block not-italic text-sm text-stone-400 lg:text-primary-200 mt-2">
+                  — FeCarD, de «Permanentes»
+                </span>
+              </motion.div>
             </motion.div>
           </div>
         </div>
@@ -513,20 +499,34 @@ export default function Landing() {
       <motion.section id="sobre-mi" className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 scroll-mt-20 overflow-hidden" {...sectionReveal}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           <div className="order-2 lg:order-1 lg:col-span-5 relative flex justify-center lg:justify-start">
-            <div
-              aria-hidden="true"
-              className="absolute -z-10 h-64 w-64 sm:h-80 sm:w-80 rounded-full blur-3xl opacity-70"
-              style={{ background: 'radial-gradient(circle, rgba(74,133,112,0.35) 0%, rgba(217,158,90,0.22) 55%, transparent 75%)' }}
-            />
-            <div className="relative rounded-2xl bg-white p-1.5 shadow-[0_16px_48px_-12px_rgba(38,72,60,0.4)]">
+            {/* Retrato de autor, chico y honesto (no el hero): mismo tratamiento
+                duotono que la placa del hero, para que se sientan la misma
+                marca. Foto nueva (luz de ventana, sin elementos raros de
+                fondo) — reemplaza al selfie viejo con póster de Freud. */}
+            <div className="relative w-48 sm:w-56 aspect-[3/4] rounded-xl overflow-hidden shadow-lifted ring-1 ring-inset ring-white/15">
               <img
-                src={felipeSobre}
-                alt="Felipe Caro sentado en el diván de su consulta"
-                width={768}
-                height={694}
+                src={felipePortrait}
+                alt="Retrato de Felipe Caro, psicólogo clínico"
+                width={640}
+                height={642}
                 loading="lazy"
-                className="h-64 w-56 sm:h-80 sm:w-72 rounded-xl object-cover"
+                className="h-full w-full object-cover"
+                style={{
+                  objectPosition: '50% 10%',
+                  filter: 'grayscale(1) contrast(1.08) brightness(1.03)',
+                }}
               />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none mix-blend-color"
+                style={{ background: 'rgb(var(--color-primary-700))', opacity: 0.85 }}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none mix-blend-soft-light"
+                style={{ background: 'rgb(var(--color-accent-400))', opacity: 0.18 }}
+              />
+              <GrainOverlay opacity={0.07} blend="overlay" />
             </div>
           </div>
 
@@ -664,7 +664,7 @@ export default function Landing() {
           className="absolute -top-[20%] left-[10%] h-[70%] w-[70%] rounded-full blur-3xl"
           style={{ background: 'radial-gradient(circle, #1c2318 0%, transparent 70%)', opacity: 0.5 }}
         />
-        <GrainOverlay className="opacity-[0.06] mix-blend-overlay" />
+        <GrainOverlay opacity={0.06} blend="overlay" />
 
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 py-24 sm:py-28 text-center">
           <motion.div
