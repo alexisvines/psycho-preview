@@ -260,66 +260,70 @@ function ElEspacio() {
   const parallaxY = useTransform(scrollYProgress, [0, 1], [-24, 24])
 
   return (
-    <motion.section
-      ref={ref}
-      className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-24 border-t border-primary-900/10"
-      {...sectionReveal}
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-        <div className="lg:col-span-5 order-2 lg:order-1">
-          <SectionHeading label="El espacio" className="mb-4">
-            El espacio
-          </SectionHeading>
-          <p className="text-base text-stone-700 leading-relaxed max-w-sm">
-            Una consulta privada y tranquila, con luz natural. Sin salas de
-            espera compartidas ni interrupciones: solo un espacio cómodo para
-            conversar con calma y en total confidencialidad.
-          </p>
-          <p className="mt-4 text-sm text-stone-500 max-w-sm">
-            Lautaro 1775, San Antonio.
-          </p>
-        </div>
+    // Fondo bg-cream-100 (en vez de transparente + solo un borde) para que
+    // la sección se lea como un bloque propio, distinto de "Sobre mí" —
+    // mismo patrón que TrustBar/HowItWorksSection. Un borde a secas sobre
+    // dos fondos planos idénticos no bastaba (feedback de Alexis: la
+    // transición se sentía "rara", sin claridad de dónde terminaba una
+    // sección y empezaba la otra).
+    <motion.section ref={ref} className="bg-cream-100 border-t border-primary-900/10" {...sectionReveal}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          <div className="lg:col-span-5 order-2 lg:order-1">
+            <SectionHeading label="El espacio" className="mb-4">
+              El espacio
+            </SectionHeading>
+            <p className="text-base text-stone-700 leading-relaxed max-w-sm">
+              Una consulta privada y tranquila, con luz natural. Sin salas de
+              espera compartidas ni interrupciones: solo un espacio cómodo para
+              conversar con calma y en total confidencialidad.
+            </p>
+            <p className="mt-4 text-sm text-stone-500 max-w-sm">
+              Lautaro 1775, San Antonio.
+            </p>
+          </div>
 
-        <div className="lg:col-span-7 order-1 lg:order-2 relative grid grid-cols-5 gap-4 sm:gap-5">
-          <motion.div
-            className="col-span-3 relative"
-            style={shouldReduceMotion ? undefined : { y: parallaxY }}
-          >
-            <div className="group relative rounded-2xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(38,72,60,0.35)] transition-shadow duration-500 hover:shadow-[0_22px_60px_-12px_rgba(38,72,60,0.45)]">
-              <img
-                src={espacio1}
-                alt="Diván y sillón de la consulta de Felipe Caro, con luz cálida y plantas"
-                width={1400}
-                height={1050}
-                loading="lazy"
-                className="w-full aspect-[4/3] object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-105"
-                style={{ filter: 'saturate(0.8) sepia(0.15)' }}
-              />
-              {/* Tint arena muy leve, unifica el amarillo saturado de las
-                  paredes reales con la paleta cálida del sitio. */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 mix-blend-multiply pointer-events-none"
-                style={{ background: '#d9c9a8', opacity: 0.1 }}
-              />
-            </div>
-          </motion.div>
-          <div className="col-span-2 relative mt-10 sm:mt-16">
-            <div className="group relative rounded-2xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(38,72,60,0.35)] transition-shadow duration-500 hover:shadow-[0_22px_60px_-12px_rgba(38,72,60,0.45)]">
-              <img
-                src={espacio2}
-                alt="Rincón acogedor del consultorio, con plantas y luz natural"
-                width={1400}
-                height={905}
-                loading="lazy"
-                className="w-full aspect-[1400/905] object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-105"
-                style={{ filter: 'saturate(0.8) sepia(0.15)' }}
-              />
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 mix-blend-multiply pointer-events-none"
-                style={{ background: '#d9c9a8', opacity: 0.1 }}
-              />
+          <div className="lg:col-span-7 order-1 lg:order-2 relative grid grid-cols-5 gap-4 sm:gap-5">
+            <motion.div
+              className="col-span-3 relative"
+              style={shouldReduceMotion ? undefined : { y: parallaxY }}
+            >
+              <div className="group relative rounded-2xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(38,72,60,0.35)] transition-shadow duration-500 hover:shadow-[0_22px_60px_-12px_rgba(38,72,60,0.45)]">
+                <img
+                  src={espacio1}
+                  alt="Diván y sillón de la consulta de Felipe Caro, con luz cálida y plantas"
+                  width={1400}
+                  height={1050}
+                  loading="lazy"
+                  className="w-full aspect-[4/3] object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-105"
+                  style={{ filter: 'saturate(0.8) sepia(0.15)' }}
+                />
+                {/* Tint arena muy leve, unifica el amarillo saturado de las
+                    paredes reales con la paleta cálida del sitio. */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 mix-blend-multiply pointer-events-none"
+                  style={{ background: '#d9c9a8', opacity: 0.1 }}
+                />
+              </div>
+            </motion.div>
+            <div className="col-span-2 relative mt-10 sm:mt-16">
+              <div className="group relative rounded-2xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(38,72,60,0.35)] transition-shadow duration-500 hover:shadow-[0_22px_60px_-12px_rgba(38,72,60,0.45)]">
+                <img
+                  src={espacio2}
+                  alt="Rincón acogedor del consultorio, con plantas y luz natural"
+                  width={1400}
+                  height={905}
+                  loading="lazy"
+                  className="w-full aspect-[1400/905] object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-105"
+                  style={{ filter: 'saturate(0.8) sepia(0.15)' }}
+                />
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 mix-blend-multiply pointer-events-none"
+                  style={{ background: '#d9c9a8', opacity: 0.1 }}
+                />
+              </div>
             </div>
           </div>
         </div>
