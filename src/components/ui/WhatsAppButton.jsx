@@ -32,7 +32,7 @@ export function WhatsAppButton({ phone, message, className = '' }) {
       className={`fixed z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lifted print:hidden ${className}`}
       initial={shouldReduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: 1, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       whileHover={shouldReduceMotion ? undefined : { scale: 1.08 }}
       whileTap={shouldReduceMotion ? undefined : { scale: 0.92 }}
     >

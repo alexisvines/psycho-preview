@@ -35,6 +35,7 @@ const routes = [
 export default function PublicLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [showWhatsAppBubble, setShowWhatsAppBubble] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const isLanding = location.pathname === '/'
@@ -68,6 +69,18 @@ export default function PublicLayout() {
   // que el hero (que ya tiene su propio fondo) no se vea "doblemente" opaco.
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Burbuja de WhatsApp: recién aparece pasado el alto de un viewport, no
+  // desde el primer segundo — en el hero ya hay un botón de WhatsApp propio
+  // (mismo destino), y con las dos cosas visibles a la vez en mobile se
+  // sentía redundante/molesto (feedback de Alexis). La burbuja queda como
+  // el "acceso de respaldo" mientras se sigue navegando más abajo.
+  useEffect(() => {
+    const onScroll = () => setShowWhatsAppBubble(window.scrollY > window.innerHeight * 0.6)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -283,14 +296,17 @@ export default function PublicLayout() {
         </div>
       </footer>
 
-      {/* Burbuja flotante: acceso directo siempre visible, complementa (no
-          reemplaza) el formulario de #contacto — para quien no quiere
-          bajar hasta ahí ni completar el campo de nombre. */}
-      <WhatsAppButton
-        phone={WHATSAPP_PHONE}
-        message="Hola Felipe, te escribo desde tu sitio web."
-        className="bottom-5 right-5 sm:bottom-6 sm:right-6"
-      />
+      {/* Burbuja flotante: acceso directo, complementa (no reemplaza) el
+          formulario de #contacto — para quien no quiere bajar hasta ahí ni
+          completar el campo de nombre. Recién aparece pasado el hero (ver
+          showWhatsAppBubble) para no duplicarse con el botón del hero. */}
+      {showWhatsAppBubble && (
+        <WhatsAppButton
+          phone={WHATSAPP_PHONE}
+          message="Hola Felipe, te escribo desde tu sitio web."
+          className="bottom-5 right-5 sm:bottom-6 sm:right-6"
+        />
+      )}
     </div>
   )
 }
