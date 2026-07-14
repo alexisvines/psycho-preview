@@ -2,7 +2,7 @@ import React, { createContext, useContext } from 'react'
 
 // Vista previa visual: no hay panel admin ni login real, así que
 // isAuthenticated queda fijo en false. Se mantiene el mismo contrato de
-// useAuth() que el proyecto real para no tocar PublicLayout/Booking.
+// useAuth() que el proyecto real para no tocar PublicLayout.
 const AuthContext = createContext({ isAuthenticated: false, logout: () => {} })
 
 export const AuthProvider = ({ children }) => (

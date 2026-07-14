@@ -54,8 +54,8 @@ export default function ApproachSection({ title, body }) {
       {...sectionReveal}
     >
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
-        <SectionLabel>El enfoque</SectionLabel>
-        <h2 className="font-display text-3xl sm:text-4xl font-semibold text-cream-50 leading-[1.1] tracking-tight mb-10">
+        <SectionLabel tone="negative">El enfoque</SectionLabel>
+        <h2 className="font-display text-3xl sm:text-4xl font-semibold text-white leading-[1.1] tracking-tight mb-10">
           {title}
         </h2>
 
@@ -78,7 +78,7 @@ export default function ApproachSection({ title, body }) {
           {intro && (
             <div className="max-w-3xl mb-10">
               <p className="text-lg sm:text-xl text-primary-200 leading-relaxed">
-                <span className="font-display italic text-2xl sm:text-[1.65rem] text-cream-50 mr-2">
+                <span className="font-display italic text-2xl sm:text-[1.65rem] text-white mr-2">
                   {intro.title}.
                 </span>
                 {intro.text}
@@ -102,7 +102,7 @@ export default function ApproachSection({ title, body }) {
                       : ''
                   }
                 >
-                  <h4 className="font-display text-lg font-semibold text-cream-50 mb-2">{item.title}</h4>
+                  <h4 className="font-display text-lg font-semibold text-white mb-2">{item.title}</h4>
                   <p className="text-primary-200 leading-relaxed">{item.text}</p>
                 </div>
               ))}
@@ -125,7 +125,7 @@ export default function ApproachSection({ title, body }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="rounded-2xl border border-accent-400/50 bg-surface p-7 sm:p-9 shadow-lifted"
+            className="rounded-2xl border border-accent-400/50 bg-white p-7 sm:p-9 shadow-lifted"
           >
             <div className="flex flex-col sm:flex-row sm:items-center gap-6">
               <div className="flex-1">
@@ -137,12 +137,12 @@ export default function ApproachSection({ title, body }) {
                     <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-accent-600 mb-2">
                       ¿Tienes dudas sobre el enfoque?
                     </span>
-                    <h4 className="font-display text-xl sm:text-2xl font-semibold text-stone-900 mb-2">
+                    <h4 className="font-display text-xl sm:text-2xl font-semibold text-[#1c1917] mb-2">
                       {closing.title}
                     </h4>
-                    <p className="text-stone-700 leading-relaxed max-w-xl">
+                    <p className="text-[#44403c] leading-relaxed max-w-xl">
                       {closing.text.split('. ').map((sentence, i, arr) => (
-                        <span key={i} className={i === 0 ? 'text-stone-900 font-medium' : ''}>
+                        <span key={i} className={i === 0 ? 'text-[#1c1917] font-medium' : ''}>
                           {sentence}
                           {i < arr.length - 1 ? '. ' : ''}
                         </span>

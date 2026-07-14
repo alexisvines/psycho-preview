@@ -43,7 +43,7 @@ function Stars() {
 
 function TestimonialCard({ name, text }) {
   return (
-    <figure className="w-[290px] sm:w-[360px] shrink-0 rounded-3xl border border-stone-200/70 bg-white/95 px-6 py-6 shadow-card">
+    <figure className="w-[290px] sm:w-[360px] shrink-0 rounded-3xl border border-stone-200/70 bg-surface/95 px-6 py-6 shadow-card">
       <Stars />
       <blockquote className="mt-3 font-display italic text-[15px] sm:text-base text-stone-700 leading-relaxed">
         “{text}”

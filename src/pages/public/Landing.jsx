@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import {
   CalendarCheck,
@@ -377,6 +377,7 @@ function ElEspacio() {
 
 export default function Landing() {
   const location = useLocation()
+  const navigate = useNavigate()
   // Motivo pre-seleccionado al hacer clic en "Agendar" desde una card de
   // Servicios — viaja calladamente hasta el formulario de WhatsApp en
   // #contacto, sin pedirle nada más a la persona.
@@ -392,10 +393,14 @@ export default function Landing() {
   // incluso mientras `isLoading` o si /public/content falla.
   const content = mergeContentBlocks(blocks)
 
-  // Navegación a un ancla desde otra ruta (ej. "/reservar" → "/#psicoanalisis"):
+  // Navegación a un ancla desde otra ruta (ej. "/escritos" → "/#psicoanalisis"):
   // Lenis vive en PublicLayout y no expone su instancia acá, así que
   // resolvemos el salto con scrollIntoView nativo — Lenis lo recoge en su
   // siguiente frame de RAF sin conflicto.
+  // Importante: el hash se "consume" y se limpia de la URL después de
+  // saltar (navigate con replace, sin dejar entrada nueva en el historial)
+  // — si no, queda pegado permanentemente (ej. ".../#/#sobre-mi") y CADA
+  // recarga futura vuelve a saltar ahí en vez de abrir en el tope.
   useEffect(() => {
     if (!location.hash) return
     const id = location.hash.slice(1)
@@ -403,6 +408,7 @@ export default function Landing() {
     if (el) {
       requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     }
+    navigate(location.pathname, { replace: true })
     // Solo al cambiar el hash (ej. al montar la landing con uno ya presente).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.hash])
@@ -485,11 +491,8 @@ export default function Landing() {
                 el borde del panel de color. Foto: felipeSobre (sentado en el
                 diván, mano en el mentón — pose de escucha), no el selfie
                 frontal de antes. Duotono real: grayscale + capa mix-blend-color
-                que lee --color-primary-700 de la paleta activa (por eso
-                cambia sola con el ThemeSwitcher) + un lavado cálido tenue en
-                soft-light + grano SOLO dentro del marco. La cita del poema
-                vive dentro del panel oscuro, en cream — ya no compite con el
-                titular en la columna de texto. */}
+                que lee --color-primary-700 + un lavado cálido tenue en
+                soft-light + grano SOLO dentro del marco. */}
             <motion.div
               className="lg:col-span-5 flex flex-col items-center lg:items-start relative z-10 lg:pl-4"
               initial={{ opacity: 0, scale: 0.96, y: 10 }}
