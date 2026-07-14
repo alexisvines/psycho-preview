@@ -231,11 +231,11 @@ export default function PublicLayout() {
           con grano), y menos altura que antes. */}
       <footer id="contacto-footer" className="bg-primary-950 text-primary-100 mt-auto border-t border-primary-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-8">
+          {/* Sin logo repetido acá: el header queda sticky (siempre visible)
+              incluso al llegar al final de la página, así que repetir el
+              lockup completo de marca justo debajo se leía como un error
+              (mismo logo dos veces, casi pegados). */}
           <div>
-            <div className="flex items-center gap-2.5 mb-3">
-              <BrandMark size={30} />
-              <span className="font-display italic text-lg font-medium text-white">Felipe Caro</span>
-            </div>
             <p className="text-sm text-primary-300 leading-relaxed max-w-xs">
               Acompañamiento psicológico profesional, cercano y confidencial. Un espacio propio para
               conversar con calma.
