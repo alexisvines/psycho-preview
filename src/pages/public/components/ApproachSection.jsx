@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import { ArrowRight, Compass } from 'lucide-react'
 import { sectionReveal } from '@/lib/motion'
 import { SectionHeading, SectionLabel } from './SectionHeading'
 import { Button } from '@/components/ui/Button'
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon'
+import { scrollToAnchor } from '@/lib/scrollToAnchor'
 
 const SEPARATOR = ' — '
 
@@ -150,11 +151,12 @@ export default function ApproachSection({ title, body }) {
                   </div>
                 </div>
               </div>
-              <Link to="/reservar" className="shrink-0 sm:pl-2">
+              <a href="#contacto" className="shrink-0 sm:pl-2" onClick={(e) => scrollToAnchor(e, '#contacto')}>
                 <Button variant="primary" size="lg" className="gap-2 w-full sm:w-auto">
-                  Reservar primera consulta <ArrowRight size={18} />
+                  <WhatsAppIcon size={19} />
+                  Agenda por WhatsApp
                 </Button>
-              </Link>
+              </a>
             </div>
           </motion.div>
         )}

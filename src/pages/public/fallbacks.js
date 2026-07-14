@@ -9,11 +9,42 @@ export const FALLBACKS = {
   },
   about: {
     title: 'Sobre Felipe Caro',
-    body: 'Soy psicólogo clínico, especializado en psicoanálisis, y atiendo en mi consultorio en Barrancas, San Antonio.\nTrabajo también como psicólogo escolar, lo que me ha dado una experiencia amplia acompañando a niños, adolescentes y adultos en distintas etapas de su vida.\nSoy además poeta: creo que escuchar con atención — a un verso o a una persona — es la misma disciplina. La terapia, para mí, es un espacio propio, sin jerga ni juicios, donde pensarte con calma.',
+    body: 'Soy psicólogo clínico, oriundo de Rancagua, especializado en psicoanálisis, y atiendo en mi consultorio en Barrancas, San Antonio.\nTrabajo también como psicólogo escolar en el Colegio Instituto del Puerto de San Antonio, lo que me ha dado una experiencia amplia acompañando a niños, adolescentes y adultos en distintas etapas de su vida.\nSoy además escritor y participo en un taller literario: es una faceta que mantuve reservada por casi veintiséis años y que solo comencé a compartir a fines de 2019. Creo que escuchar con atención — a un verso o a una persona — es la misma disciplina. La terapia, para mí, es un espacio propio, sin jerga ni juicios, donde pensarte con calma.',
   },
   services: {
     title: 'Servicios',
-    body: 'Terapia infanto-juvenil — Acompañamiento especializado para niños y adolescentes, con un enfoque cercano y adaptado a cada etapa del desarrollo.\nTerapia para adultos — Un espacio confidencial para trabajar ansiedad, autoestima, duelo y procesos de cambio.\nOrientación a padres — Herramientas y acompañamiento para apoyar a tus hijos desde la crianza, en coordinación con su proceso terapéutico.',
+    items: [
+      {
+        name: 'Psicoterapia de orientación psicoanalítica',
+        price: 'Desde $35.398',
+        description: 'Atención psicoterapéutica individual para adolescentes y adultos, orientada a comprender el malestar emocional, los conflictos vinculares, la ansiedad, la tristeza, los duelos y las crisis personales desde una perspectiva clínica profunda y respetuosa del proceso subjetivo.',
+      },
+      {
+        name: 'Psicoterapia para adolescentes',
+        price: 'Desde $35.398',
+        description: 'Acompañamiento clínico dirigido a adolescentes que presentan dificultades emocionales, ansiedad, desmotivación, conflictos familiares, problemas vinculares, crisis escolares o procesos de adaptación. Se articula trabajo con familia y colegio.',
+      },
+      {
+        name: 'Psicoterapia para adultos',
+        price: 'Desde $35.398',
+        description: 'Espacio clínico individual para abordar ansiedad, síntomas depresivos, conflictos relacionales, crisis vitales, duelos, estrés, dificultades laborales o problemáticas familiares, desde una orientación psicoanalítica y con resguardo de la confidencialidad.',
+      },
+      {
+        name: 'Terapia de pareja',
+        price: 'Desde $46.000',
+        description: 'Atención orientada a parejas que atraviesan conflictos vinculares, dificultades de comunicación, crisis afectivas, celos, distanciamiento emocional o procesos de separación. El trabajo busca favorecer la comprensión del conflicto y mejorar los modos de relación.',
+      },
+      {
+        name: 'Evaluación psicológica clínica',
+        price: 'Desde $80.000',
+        description: 'Proceso de evaluación mediante entrevistas clínicas e instrumentos psicológicos, orientado a comprender el funcionamiento emocional, vincular y adaptativo de la persona. Puede incluir informe psicológico según requerimiento.',
+      },
+      {
+        name: 'Informes psicológicos clínicos',
+        price: 'Desde $80.000',
+        description: 'Elaboración de informes psicológicos para fines clínicos, laborales, médicos o institucionales, sustentados en entrevistas, antecedentes relevantes y análisis profesional del estado psicológico actual.',
+      },
+    ],
   },
   how_it_works: {
     title: '¿Cómo funciona?',
@@ -33,7 +64,7 @@ export const FALLBACKS = {
   },
   contact: {
     title: '¿Listo para empezar tu proceso?',
-    body: 'Dirección: Lautaro 1775, San Antonio\nTeléfono: +56 9 5407 2852\nHorario: Lunes a viernes desde las 14:00 · Sábado 8:00 a 14:00',
+    body: 'Dirección: Lautaro 1775 C, oficina N°3, Barrancas, San Antonio, Chile\nTeléfono: +56 9 5407 2852\nHorario: Lunes a viernes desde las 14:00 · Sábado 8:00 a 14:00',
   },
 }
 

@@ -16,7 +16,8 @@ export function GlowCard({ children, className = '', ...props }) {
         shouldReduceMotion
           ? undefined
           : {
-              boxShadow: '0 0 32px rgba(74, 133, 112, 0.25), 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 12px rgb(0 0 0 / 0.05)',
+              boxShadow:
+                '0 0 32px rgb(var(--color-primary-500) / 0.25), 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 12px rgb(0 0 0 / 0.05)',
             }
       }
       transition={{ duration: 0.3, ease: 'easeOut' }}

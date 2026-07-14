@@ -5,7 +5,7 @@ import { SectionHeading } from './SectionHeading'
 
 // Ficha de Google Maps del consultorio (enlazada desde el badge de
 // calificación); apunta a la vista pública de reseñas.
-const GOOGLE_REVIEWS_URL =
+export const GOOGLE_REVIEWS_URL =
   'https://www.google.com/maps/place/Consultorio+Felipe+Caro+D%C3%ADaz,+psic%C3%B3logo+cl%C3%ADnico/@-33.5956188,-71.6106921,17z/data=!4m8!3m7!1s0x96623855da1ac817:0x2ffa2e97ea353826!8m2!3d-33.5956188!4d-71.6106921!9m1!1b1!16s%2Fg%2F11c2jtvp8g'
 
 /**

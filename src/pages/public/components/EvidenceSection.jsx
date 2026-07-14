@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { sectionReveal } from '@/lib/motion'
 import { SectionHeading } from './SectionHeading'
-import { WatercolorWash } from '@/components/ui/WatercolorWash'
 
 const SEPARATOR = ' — '
 // Cita de fuente, appendeada al final del texto entre paréntesis:
@@ -73,17 +72,15 @@ export function classifyEvidenceItems(items) {
 
 function PullStat({ stat, title, text, source }) {
   return (
-    <div>
-      <p className="font-display text-6xl sm:text-7xl font-medium text-accent-600 leading-none tracking-tight">
+    <div className="h-full flex flex-col">
+      <p className="font-display text-6xl sm:text-7xl font-medium text-accent-700 leading-none tracking-tight">
         {stat}
       </p>
-      <p className="mt-4 text-base sm:text-lg text-stone-600 leading-relaxed max-w-xs">
+      <p className="mt-4 text-base sm:text-lg text-stone-600 leading-relaxed max-w-xs flex-1">
         {stat === title ? text : `${title}. ${text}`}
       </p>
       {source && (
-        <p className="mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">
-          {source}
-        </p>
+        <p className="mt-3 text-xs text-stone-400 italic">{source}</p>
       )}
     </div>
   )
@@ -113,56 +110,48 @@ export default function EvidenceSection({ title, body }) {
   return (
     <motion.section
       id="evidencia"
-      className="relative bg-gradient-to-b from-primary-50/70 via-cream to-primary-50/40 border-y border-primary-100/70 scroll-mt-20"
+      className="relative bg-cream-100 border-y border-primary-900/10 scroll-mt-20"
       {...sectionReveal}
     >
-      <WatercolorWash />
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
         <SectionHeading label="Evidencia" align="center" className="mb-14">
           {title}
         </SectionHeading>
 
-        {stats.length === 2 ? (
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-x-10 gap-y-14">
-            <motion.div
-              className="md:col-span-7"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <PullStat {...stats[0]} />
-            </motion.div>
-            <motion.div
-              className="md:col-span-5 md:mt-10"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.5, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <PullStat {...stats[1]} />
-            </motion.div>
-
-            {textBlocks.map((block, i) => (
-              <motion.div
-                key={block.title}
-                className={i === 0 ? 'md:col-span-5 md:col-start-1' : 'md:col-span-6 md:col-start-6'}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.5, delay: 0.16 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <TextBlock {...block} />
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-10">
-            {items.map((item) => (
-              <TextBlock key={item.title} {...item} />
-            ))}
-          </div>
-        )}
+        {/* Contenedor con límites claros (borde + sombra + fondo sólido),
+            misma lógica de "escalera de superficies" que el panel de "El
+            enfoque" — antes las cifras flotaban sueltas sobre un lavado
+            fotográfico apenas distinguible del fondo de la página. */}
+        <motion.div
+          className="rounded-2xl bg-surface border border-primary-100 shadow-lifted p-7 sm:p-10"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {stats.length === 2 ? (
+            <>
+              {/* Las dos cifras en la misma grilla, misma altura de línea
+                  base (sin el desfase vertical anterior) para que se lean
+                  como un par, no como un descuadre. */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-10 pb-10 mb-10 border-b border-primary-100">
+                <PullStat {...stats[0]} />
+                <PullStat {...stats[1]} />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8">
+                {textBlocks.map((block) => (
+                  <TextBlock key={block.title} {...block} />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-10">
+              {items.map((item) => (
+                <TextBlock key={item.title} {...item} />
+              ))}
+            </div>
+          )}
+        </motion.div>
       </div>
     </motion.section>
   )

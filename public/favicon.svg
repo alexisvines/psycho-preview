@@ -1,11 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <!-- Marca de Felipe Caro: "El cuenco que recibe" — anillo abierto con
-       semilla terracota entrando por la apertura. Versión favicon: trazo
-       engrosado y semilla circular para legibilidad a 16px. -->
-  <rect width="48" height="48" rx="11" fill="#4a5d42"/>
-  <g transform="translate(24 24) scale(0.78) translate(-24 -24)">
-    <path d="M 39.97 18.19 A 17 17 0 1 1 29.81 8.03"
-          fill="none" stroke="#f5efe3" stroke-width="6" stroke-linecap="round"/>
-    <circle cx="29.9" cy="18.1" r="3.6" fill="#d38e5f"/>
-  </g>
+  <!-- Marca de Felipe Caro: tesseracto (cubo dentro de cubo). Versión
+       favicon: solo la cara frontal, con trazo engrosado, para legibilidad
+       a 16px (el detalle completo del tesseracto se pierde a ese tamaño). -->
+  <rect width="48" height="48" rx="11" fill="#17202a"/>
+  <path d="M 12 20 L 30 20 L 36 12 L 18 12 Z"
+        fill="#A9E9E2" fill-opacity="0.85" stroke="#5B8FC7" stroke-width="2.4" stroke-linejoin="round"/>
 </svg>

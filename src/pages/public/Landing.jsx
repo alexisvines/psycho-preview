@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
@@ -19,16 +19,20 @@ import {
   Star,
   ScrollText,
   Award,
+  Linkedin,
 } from 'lucide-react'
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon'
+import { scrollToAnchor } from '@/lib/scrollToAnchor'
 import felipePortrait from '@/assets/felipe-whatsapp.jpg'
 import felipeSobre from '@/assets/felipe-sobre.jpg'
 import espacio1 from '@/assets/espacio-1.jpg'
 import espacio2 from '@/assets/espacio-2.jpg'
 import { publicAPI } from '@/api/endpoints'
 import { PUBLIC_CONTENT_QUERY_KEY, mergeContentBlocks } from './fallbacks'
-import TestimonialsMarquee from './components/TestimonialsMarquee'
+import TestimonialsMarquee, { GOOGLE_REVIEWS_URL } from './components/TestimonialsMarquee'
 import EvidenceSection from './components/EvidenceSection'
 import ApproachSection from './components/ApproachSection'
+import WhatsAppCTA from './components/WhatsAppCTA'
 import { SectionHeading } from './components/SectionHeading'
 import { Button } from '@/components/ui/Button'
 import { CardContent } from '@/components/ui/Card'
@@ -48,9 +52,11 @@ import {
 // editable desde el admin, no queremos que un nombre nuevo rompa el ícono).
 function serviceIcon(name = '') {
   const key = name.toLowerCase()
-  if (key.includes('infanto') || key.includes('niñ') || key.includes('adolescen')) return Baby
-  if (key.includes('padre') || key.includes('orientaci') || key.includes('crianza')) return HeartHandshake
-  if (key.includes('adulto')) return UserRound
+  if (key.includes('pareja')) return HeartHandshake
+  if (key.includes('adolescen')) return GraduationCap
+  if (key.includes('evaluaci') || key.includes('informe')) return ScrollText
+  if (key.includes('adultos')) return UserRound
+  if (key.includes('psicoanalítica')) return Sparkles
   return Sparkles
 }
 
@@ -89,8 +95,8 @@ function HeroHeadline({ text }) {
 // bar bajo el hero — el detalle que convierte "sitio bonito" en "profesional
 // real". Copy fijo (no viene del CMS): son datos verificables, no editoriales.
 const CREDENTIALS = [
-  { icon: GraduationCap, label: 'Magíster UDP en Clínica Psicoanalítica' },
-  { icon: BadgeCheck, label: 'Colegiado N° 63345' },
+  { icon: BadgeCheck, label: 'MINEDUC N° 63345' },
+  { icon: BadgeCheck, label: 'Registro Superintendencia de Salud N.º 109.585' },
   { icon: HeartHandshake, label: '15+ años de experiencia' },
   { icon: Star, label: '★ 5,0 en Google (44 reseñas)' },
 ]
@@ -100,9 +106,10 @@ const CREDENTIALS = [
 // Iconos académicos genéricos (no logos de universidades: son marcas
 // registradas y usarlas sin permiso no es buena práctica).
 const EDUCATION = [
-  { year: '2010', icon: GraduationCap, label: 'Psicólogo, Universidad Nacional Andrés Bello' },
-  { year: '2017', icon: ScrollText, label: 'Postítulo en Clínica Psicoanalítica de Adultos, Universidad Diego Portales' },
-  { year: '2018', icon: Award, label: 'Magíster en Psicología, mención Teoría y Clínica Psicoanalítica, Universidad Diego Portales' },
+  { year: '', icon: GraduationCap, label: 'Magíster en Intervención Clínica, Universidad Nacional Andrés Bello' },
+  { year: '', icon: ScrollText, label: 'Postítulo en Clínica Psicoanalítica de Adultos, Universidad Diego Portales' },
+  { year: '', icon: Award, label: 'Magíster en Psicología, mención Teoría y Clínica Psicoanalítica, Universidad Diego Portales' },
+  { year: '', icon: Award, label: 'Diploma Superior y Especialización en Ciencias Sociales, mención Psicoanálisis y Prácticas Socioeducativas, FLACSO Argentina' },
 ]
 
 // Motivos de consulta frecuentes: chips informativos (no clickeables) que
@@ -276,7 +283,7 @@ function ElEspacio() {
             conversar con calma y en total confidencialidad.
           </p>
           <p className="mt-4 text-sm text-stone-500 max-w-sm">
-            Lautaro 1775, San Antonio.
+            Lautaro 1775 C, oficina N°3, Barrancas, San Antonio, Chile.
           </p>
         </div>
 
@@ -322,6 +329,46 @@ function ElEspacio() {
               />
             </div>
           </div>
+
+          {/* TODO: add espacio-3.jpg / espacio-4.jpg once Felipe sends final photo files
+          <div className="col-span-2 relative mt-10 sm:mt-16">
+            <div className="group relative rounded-2xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(38,72,60,0.35)] transition-shadow duration-500 hover:shadow-[0_22px_60px_-12px_rgba(38,72,60,0.45)]">
+              <img
+                src={espacio3}
+                alt="Detalle del consultorio"
+                width={1400}
+                height={905}
+                loading="lazy"
+                className="w-full aspect-[1400/905] object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-105"
+                style={{ filter: 'saturate(0.8) sepia(0.15)' }}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 mix-blend-multiply pointer-events-none"
+                style={{ background: '#d9c9a8', opacity: 0.1 }}
+              />
+            </div>
+          </div>
+
+          <div className="col-span-2 relative mt-10 sm:mt-16">
+            <div className="group relative rounded-2xl overflow-hidden shadow-[0_16px_48px_-12px_rgba(38,72,60,0.35)] transition-shadow duration-500 hover:shadow-[0_22px_60px_-12px_rgba(38,72,60,0.45)]">
+              <img
+                src={espacio4}
+                alt="Otro ángulo del consultorio"
+                width={1400}
+                height={905}
+                loading="lazy"
+                className="w-full aspect-[1400/905] object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-105"
+                style={{ filter: 'saturate(0.8) sepia(0.15)' }}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 mix-blend-multiply pointer-events-none"
+                style={{ background: '#d9c9a8', opacity: 0.1 }}
+              />
+            </div>
+          </div>
+          */}
         </div>
       </div>
     </motion.section>
@@ -330,6 +377,10 @@ function ElEspacio() {
 
 export default function Landing() {
   const location = useLocation()
+  // Motivo pre-seleccionado al hacer clic en "Agendar" desde una card de
+  // Servicios — viaja calladamente hasta el formulario de WhatsApp en
+  // #contacto, sin pedirle nada más a la persona.
+  const [selectedService, setSelectedService] = useState(null)
   const { data: blocks, isLoading } = useQuery({
     queryKey: PUBLIC_CONTENT_QUERY_KEY,
     queryFn: () => publicAPI.getContent(),
@@ -358,13 +409,7 @@ export default function Landing() {
 
   const heroParagraphs = content.hero.body.split('\n').filter(Boolean)
   const aboutParagraphs = content.about.body.split('\n').filter(Boolean)
-  const services = content.services.body
-    .split('\n')
-    .filter(Boolean)
-    .map((line) => {
-      const [name, ...rest] = line.split(' — ')
-      return { name, description: rest.join(' — ') }
-    })
+  const services = content.services.items
   const steps = content.how_it_works.body.split('\n').filter(Boolean)
   const contactLines = content.contact.body.split('\n').filter(Boolean)
 
@@ -386,6 +431,17 @@ export default function Landing() {
               <HeroHeadline text={content.hero.title} />
 
               <motion.div
+                className="mt-4 mb-7 max-w-xl"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.42, duration: 0.4 }}
+              >
+                <span className="text-xs font-semibold uppercase tracking-wide text-primary-600">
+                  Consultorio de atención psicológica — Felipe Caro Díaz, psicólogo clínico de orientación psicoanalítica
+                </span>
+              </motion.div>
+
+              <motion.div
                 className="mt-7 max-w-xl space-y-2"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -404,7 +460,7 @@ export default function Landing() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.62, duration: 0.4 }}
               >
-                <Link to="/reservar">
+                <a href="#contacto" onClick={(e) => scrollToAnchor(e, '#contacto')}>
                   <motion.span
                     className="inline-flex"
                     whileHover={{ scale: 1.035 }}
@@ -412,11 +468,12 @@ export default function Landing() {
                     transition={{ type: 'spring', stiffness: 400, damping: 22 }}
                   >
                     <Button variant="primary" size="lg" className="gap-2">
-                      Reservar hora <ArrowRight size={18} />
+                      <WhatsAppIcon size={19} />
+                      Agenda por WhatsApp
                     </Button>
                   </motion.span>
-                </Link>
-                <a href="#sobre-mi">
+                </a>
+                <a href="#sobre-mi" onClick={(e) => scrollToAnchor(e, '#sobre-mi')}>
                   <Button variant="ghost" size="lg" className="gap-1.5 text-primary-700 hover:bg-primary-50">
                     Conocer más <ArrowDown size={16} />
                   </Button>
@@ -463,28 +520,6 @@ export default function Landing() {
                 />
                 <GrainOverlay opacity={0.07} blend="overlay" />
               </div>
-
-              {/* Acento poético: dentro del panel de color, en cream sobre
-                  oscuro — lee como una cita real, no como otra línea de
-                  subtítulo compitiendo con el h1. */}
-              <motion.div
-                className="mt-8 max-w-xs lg:max-w-[21rem]"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.62, duration: 0.4 }}
-              >
-                <span aria-hidden="true" className="block h-px w-10 bg-accent-400/60 mb-4" />
-                <p className="font-display italic text-lg sm:text-xl text-stone-800 lg:text-cream-50 leading-snug">
-                  «Que los puertos rojos inunden las vidas»
-                </p>
-                {/* Firma real de Felipe como poeta ("Permanentes", en su sitio
-                    de difusión poética) — más auténtico que atribuirlo a
-                    "Felipe Caro" a secas, y queda contenido a este detalle:
-                    no se usa como marca del sitio clínico. */}
-                <span className="block not-italic text-sm text-stone-400 lg:text-primary-200 mt-2">
-                  — FeCarD, de «Permanentes»
-                </span>
-              </motion.div>
             </motion.div>
           </div>
         </div>
@@ -550,6 +585,18 @@ export default function Landing() {
                   {p}
                 </p>
               ))}
+            </div>
+
+            {/* Acento poético: movido acá desde el hero — en la primera
+                pantalla desconcertaba a quien llega buscando ayuda ("no sabe
+                qué hacer con un verso hermético"); acá, dentro de "Sobre mí",
+                es contexto biográfico legítimo sobre su faceta de escritor. */}
+            <div className="mt-6 max-w-prose">
+              <span aria-hidden="true" className="block h-px w-10 bg-accent-400/60 mb-4" />
+              <p className="font-display italic text-lg text-stone-700 leading-snug">
+                «Que los puertos rojos inunden las vidas»
+              </p>
+              <span className="block not-italic text-sm text-stone-400 mt-2">— Felipe Caro</span>
             </div>
 
             {/* Formación: línea de tiempo vertical compacta */}
@@ -627,7 +674,23 @@ export default function Landing() {
                           <Icon size={22} strokeWidth={1.75} />
                         </div>
                         <h3 className="font-display text-xl font-medium text-stone-900 mb-2">{service.name}</h3>
-                        <p className="text-stone-600 text-sm leading-relaxed">{service.description}</p>
+                        <span className="text-xs font-semibold uppercase tracking-wide text-accent-700 mb-1 block">{service.price}</span>
+                        <p className="text-stone-600 text-sm leading-relaxed flex-1">{service.description}</p>
+                        {/* En vez de abrir WhatsApp directo, guarda el motivo
+                            y lleva al formulario de #contacto — así el
+                            mensaje final lleva nombre + motivo juntos, no
+                            dos mensajes separados. */}
+                        <a
+                          href="#contacto"
+                          onClick={(e) => {
+                            setSelectedService(service.name)
+                            scrollToAnchor(e, '#contacto')
+                          }}
+                          className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary-700 hover:text-primary-800 transition-colors"
+                        >
+                          <WhatsAppIcon size={14} />
+                          Agendar <ArrowRight size={14} />
+                        </a>
                       </CardContent>
                     </GlowCard>
                   </motion.div>
@@ -680,24 +743,12 @@ export default function Landing() {
               {content.contact.title || '¿Listo para empezar tu proceso?'}
             </h2>
             <p className="text-lg text-primary-200 max-w-xl mx-auto mb-10">
-              Reserva tu primera sesión en pocos minutos, sin llamadas ni esperas.
+              Cuéntanos tu nombre y nos comunicaremos por WhatsApp.
             </p>
 
-            <Link to="/reservar" className="inline-block">
-              <motion.span
-                className="inline-flex"
-                whileHover={{ scale: 1.035 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 22 }}
-              >
-                <Button
-                  size="lg"
-                  className="gap-2 bg-accent-500 text-cream-50 hover:bg-accent-600 active:bg-accent-700 shadow-[0_8px_28px_-6px_rgba(196,118,74,0.55)]"
-                >
-                  Reservar hora <ArrowRight size={18} />
-                </Button>
-              </motion.span>
-            </Link>
+            <div className="max-w-md mx-auto mb-10">
+              <WhatsAppCTA service={selectedService} />
+            </div>
 
             {/* Datos de contacto: línea compacta, no otra sección — el
                 footer inmediatamente debajo ya no los repite. */}
@@ -711,7 +762,54 @@ export default function Landing() {
                   </span>
                 )
               })}
+              <a
+                href="https://www.linkedin.com/in/felipecarodiaz/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-primary-200 hover:text-primary-100 transition-colors"
+              >
+                <Linkedin size={15} className="text-primary-400 shrink-0" />
+                LinkedIn
+              </a>
             </div>
+
+            {/* Mapa: Google Maps embed sin API key no permite estilos custom
+                (eso requiere Maps JavaScript API + Map ID), así que el
+                embed básico trae sus colores saturados de siempre — un
+                filtro CSS (grayscale + tinte navy vía sepia/hue-rotate)
+                lo acerca a la paleta del sitio, mismo truco que ya usan
+                los retratos (saturate/sepia) para el look duotono.
+                Un iframe por sí solo no "lleva a ningún lado" al hacer
+                clic — se le pone un overlay clickeable encima (el iframe
+                queda pointer-events:none) que abre la ficha real de Google
+                Maps del consultorio en una pestaña nueva. */}
+            <a
+              href={GOOGLE_REVIEWS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative mt-12 max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-lifted block"
+              aria-label="Abrir la ubicación del consultorio en Google Maps"
+            >
+              <iframe
+                src="https://www.google.com/maps?q=-33.5956188,-71.6106921&output=embed"
+                title="Ubicación consulta"
+                loading="lazy"
+                width="100%"
+                height="250"
+                style={{
+                  border: 0,
+                  pointerEvents: 'none',
+                  filter: 'grayscale(0.85) sepia(0.35) hue-rotate(175deg) saturate(1.8) brightness(0.92) contrast(1.05)',
+                }}
+                aria-hidden="true"
+                tabIndex="-1"
+              />
+              <div className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-primary-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pb-4">
+                <span className="text-sm font-medium text-white inline-flex items-center gap-1.5">
+                  Abrir en Google Maps <ArrowRight size={14} />
+                </span>
+              </div>
+            </a>
           </motion.div>
         </div>
       </motion.section>
