@@ -4,9 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Lenis from 'lenis'
 import { Menu, X, MapPin, Phone, Clock3 } from 'lucide-react'
 import { BrandMark } from './ui/BrandMark'
-import { WhatsAppIcon } from './ui/WhatsAppIcon'
 import { WhatsAppButton } from './ui/WhatsAppButton'
-import { Button } from './ui/Button'
 import { FALLBACKS } from '../pages/public/fallbacks'
 
 const WHATSAPP_PHONE = '+56 9 5407 2852'
@@ -145,15 +143,6 @@ export default function PublicLayout() {
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-4">
-            <a href="#contacto" onClick={(e) => handleAnchorClick(e, '#contacto')}>
-              <Button variant="secondary" size="sm" className="gap-1.5 bg-white text-primary-900 hover:bg-cream-100">
-                <WhatsAppIcon size={16} />
-                Agenda por WhatsApp
-              </Button>
-            </a>
-          </div>
-
           {/* Mobile menu button */}
           <button
             className="md:hidden p-2 text-primary-200 hover:bg-white/10 rounded-lg transition-colors"
@@ -209,15 +198,6 @@ export default function PublicLayout() {
                     {r.label}
                   </Link>
                 ))}
-                <a href="#contacto" onClick={(e) => {
-                  setMenuOpen(false)
-                  handleAnchorClick(e, '#contacto')
-                }}>
-                  <Button variant="primary" className="w-full gap-1.5">
-                    <WhatsAppIcon size={17} />
-                    Agenda por WhatsApp
-                  </Button>
-                </a>
               </div>
               </motion.div>
             </motion.div>

@@ -689,9 +689,8 @@ export default function Landing() {
                             setSelectedService(service.name)
                             scrollToAnchor(e, '#contacto')
                           }}
-                          className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary-700 hover:text-primary-800 transition-colors"
+                          className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary-700 hover:text-primary-800 transition-colors"
                         >
-                          <WhatsAppIcon size={14} />
                           Agendar <ArrowRight size={14} />
                         </a>
                       </CardContent>
