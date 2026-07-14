@@ -14,10 +14,10 @@ export function EmptyState({ icon: Icon, title, description, action, className =
           transition={{ delay: 0.1 }}
           className="mb-4"
         >
-          <Icon className="h-16 w-16 text-stone-300" />
+          <Icon className="h-16 w-16 text-primary-200" />
         </motion.div>
       )}
-      {title && <h3 className="text-lg font-semibold text-stone-900 mb-2">{title}</h3>}
+      {title && <h3 className="font-display text-xl font-medium text-stone-900 mb-2">{title}</h3>}
       {description && <p className="text-stone-600 mb-4 max-w-sm">{description}</p>}
       {action && <div className="mt-6">{action}</div>}
     </motion.div>
