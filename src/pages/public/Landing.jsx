@@ -273,7 +273,11 @@ function ElEspacio() {
       {...sectionReveal}
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-        <div className="lg:col-span-5 order-2 lg:order-1">
+        {/* En mobile va primero (antes las fotos aparecían antes que el
+            propio título de la sección, y quedaban pegadas a la foto de
+            "Sobre mí" de arriba — dos secciones de fotos sin encabezado de
+            por medio). En desktop mantiene su posición vía lg:order-1. */}
+        <div className="lg:col-span-5 order-1 lg:order-1">
           <SectionHeading label="El espacio" className="mb-4">
             El espacio
           </SectionHeading>
@@ -287,7 +291,7 @@ function ElEspacio() {
           </p>
         </div>
 
-        <div className="lg:col-span-7 order-1 lg:order-2 relative grid grid-cols-5 gap-4 sm:gap-5">
+        <div className="lg:col-span-7 order-2 lg:order-2 relative grid grid-cols-5 gap-4 sm:gap-5">
           <motion.div
             className="col-span-3 relative"
             style={shouldReduceMotion ? undefined : { y: parallaxY }}
@@ -536,7 +540,11 @@ export default function Landing() {
           de consulta frecuentes. */}
       <motion.section id="sobre-mi" className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 scroll-mt-20 overflow-hidden" {...sectionReveal}>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          <div className="order-2 lg:order-1 lg:col-span-5 relative flex justify-center lg:justify-start">
+          {/* En mobile va primero (antes el orden dejaba la foto al final,
+              después de toda la formación y los chips — quedaba huérfana,
+              sin conexión visual con el encabezado). En desktop mantiene su
+              posición a la izquierda vía lg:order-1. */}
+          <div className="order-1 lg:order-1 lg:col-span-5 relative flex justify-center lg:justify-start">
             {/* Retrato de autor, chico y honesto (no el hero): mismo tratamiento
                 duotono que la placa del hero, para que se sientan la misma
                 marca. Foto nueva (luz de ventana, sin elementos raros de
@@ -568,7 +576,7 @@ export default function Landing() {
             </div>
           </div>
 
-          <div className="order-1 lg:order-2 lg:col-span-7">
+          <div className="order-2 lg:order-2 lg:col-span-7">
             <SectionHeading label="Sobre mí" className="mb-7">
               {content.about.title}
             </SectionHeading>
