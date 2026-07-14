@@ -36,3 +36,13 @@ Routes (`src/App.jsx`): `/` (Landing), `/escritos` (Escritos), `*` (NotFound). A
 **Brand mark**: `src/components/ui/BrandMark.jsx` renders a tesseract (cube-in-cube) wireframe logo with framer-motion stroke-draw-in animation, using colors matched to a design the client provided directly (`#BBD9F2`/`#EEC0DE`/`#BFAEEC`, stroke `#5B8FC7`) — these are intentionally NOT tied to the site's navy/ochre palette variables; it's the client's personal mark, kept faithful to what they approved rather than reskinned to match. There's a `tiny` fallback (<24px) that draws only the front face, since the full tesseract detail is illegible at favicon/small-icon sizes.
 
 **Header is a fixed solid navy band always** (not transparent-over-hero or scroll-conditional) — a deliberate fix for it blending into page content and looking muddy/translucent over the also-dark `#psicoanalisis`/`#contacto` sections.
+
+**Floating WhatsApp bubble only appears after scrolling past ~60% of the viewport height** (`showWhatsAppBubble` state in `PublicLayout.jsx`), not from mount — on mobile it used to render at the same time as the hero's own WhatsApp CTA button, two identical affordances stacked in the first screen.
+
+## Not yet built: client self-service content editing
+
+Felipe (the client) currently cannot change any text/prices/photos without a code change — everything lives in `fallbacks.js`, `escritosContent.js`, and directly-imported image files. He asked about self-managing without touching code, and about the site being portable to hosting he controls (it currently deploys from this GitHub account, but may move to his own accounts later).
+
+Recommended approach when this gets picked up: a published Google Sheet (edited from Felipe's own Google account, no dev involvement) as the content source, fetched client-side at page load. This fits the existing architecture almost exactly as-is — `publicAPI.getContent()` (`src/api/endpoints.js`) is already a stubbed-out fetch that `mergeContentBlocks()` merges against `FALLBACKS`; swap the stub for a real `fetch()` of the sheet published as CSV/JSON and the existing fallback-merge logic keeps working unchanged. Because the fetch happens in the visitor's browser (not at build time), this works regardless of where the static files end up hosted — no dependency on this repo's GitHub Actions or GitHub Pages specifically.
+
+Scope it to what actually churns: service names/prices and Escritos entries (already isolated in their own files for exactly this reason) and possibly photo URLs (via public Google Drive/Photos links referenced from the same sheet). Don't route the rest of the copy (bio, "El enfoque", evidence stats, etc.) through this — it changes rarely and isn't worth the added indirection.
