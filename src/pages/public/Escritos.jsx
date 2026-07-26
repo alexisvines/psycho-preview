@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { BookOpen, FileText, ArrowRight } from 'lucide-react'
 import { BentoGrid, BentoCard } from '@/components/ui/BentoGrid'
 import { GlowCard } from '@/components/ui/GlowCard'
+import { GrainOverlay } from '@/components/ui/GrainOverlay'
 import { CardContent } from '@/components/ui/Card'
 import { SectionHeading } from './components/SectionHeading'
 import { staggerContainer, staggerItem, sectionReveal } from '@/lib/motion'
@@ -35,11 +36,13 @@ export default function Escritos() {
   return (
     <div className="min-h-screen py-20 sm:py-28">
       <motion.section className="max-w-6xl mx-auto px-4 sm:px-6" {...sectionReveal}>
-        {/* Header con fondo propio (gradiente sutil, no toda la sección):
-            agrupa título + selector como una unidad con presencia propia,
-            en vez de flotar sobre el mismo fondo plano de toda la página. */}
-        <div className="-mx-4 sm:-mx-6 px-4 sm:px-6 pt-4 pb-12 mb-4 border-b border-primary-900/10 bg-gradient-to-b from-primary-50/60 via-primary-50/20 to-transparent">
-          <div className="mb-12">
+        {/* Header con fondo propio: degradado ocre (no navy pálido, que se
+            perdía contra el cream de fondo por muy poco contraste) + grano
+            superpuesto — textura en vez de mancha de color plana, mismo
+            recurso que ya usa EscritoDetail.jsx/NotFound.jsx. */}
+        <div className="relative overflow-hidden -mx-4 sm:-mx-6 px-4 sm:px-6 pt-4 pb-12 mb-4 border-b border-primary-900/10 bg-gradient-to-b from-accent-100/70 via-accent-50/30 to-transparent">
+          <GrainOverlay opacity={0.06} blend="multiply" />
+          <div className="relative mb-12">
             <SectionHeading label="Colección" align="center">Escritos</SectionHeading>
             <p className="text-stone-600 mt-3 text-center">
               Poesía y reflexiones clínicas, publicadas a medida que están listas.
@@ -51,7 +54,7 @@ export default function Escritos() {
               (ej. "cuentos") la hace aparecer acá solo con eso. Segmented
               control con "pill" deslizante compartiendo layoutId: Framer
               Motion anima la transición de posición entre botones solo. */}
-          <div className="flex justify-center">
+          <div className="relative flex justify-center">
             <div className="inline-flex bg-primary-50 rounded-xl p-1 gap-1">
               {CATEGORIES.map((cat) => (
                 <button
