@@ -26,6 +26,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_SERVICES_SHEET_CSV_URL: ${{ secrets.VITE_SERVICES_SHEET_CSV_URL }}
+          VITE_ESCRITOS_SHEET_CSV_URL: ${{ secrets.VITE_ESCRITOS_SHEET_CSV_URL }}
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
