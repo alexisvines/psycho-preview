@@ -1,7 +1,7 @@
 import { useParams, Link, Navigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, BookOpen, FileText } from 'lucide-react'
 import { sectionReveal } from '@/lib/motion'
 import { GrainOverlay } from '@/components/ui/GrainOverlay'
 import { publicAPI } from '@/api/endpoints'
@@ -69,7 +69,7 @@ function LibroParagraph({ paragraph, isFirst }) {
   const rest = paragraph.slice(1)
   return (
     <p className="font-display text-lg text-stone-800 leading-loose text-justify mb-6 whitespace-pre-line">
-      <span className="float-left text-6xl sm:text-7xl font-display leading-[0.8] pr-2 pt-1 text-primary-700">
+      <span className="float-left text-6xl sm:text-8xl font-display leading-[0.8] pr-2 pt-1 text-primary-700">
         {firstChar}
       </span>
       {rest}
@@ -78,10 +78,12 @@ function LibroParagraph({ paragraph, isFirst }) {
 }
 
 // "paper" (psicoanaliticos): sobrio, denso, sin ornamento — convención de
-// ensayo/paper académico en vez de manuscrito literario.
+// ensayo/paper académico en vez de manuscrito literario. Sans-serif en vez
+// de la serif editorial del poema, para leerse como documento profesional
+// contemporáneo en vez de manuscrito.
 function PaperParagraph({ paragraph }) {
   return (
-    <p className="font-display text-lg text-stone-800 leading-relaxed text-justify mb-6 whitespace-pre-line">
+    <p className="font-sans text-lg text-stone-800 leading-relaxed text-justify mb-6 whitespace-pre-line">
       {paragraph}
     </p>
   )
@@ -91,11 +93,12 @@ function EscritoBody({ text, category, excerpt }) {
   const isLibro = category === 'literarios'
   const blocks = parseEscritoBlocks(text)
   const firstParagraphIndex = blocks.findIndex((b) => b.type === 'paragraph')
+  let headingCount = 0
 
   return (
     <div>
       {!isLibro && excerpt && (
-        <p className="border-l-2 border-accent-300 pl-4 italic text-stone-600 text-sm leading-relaxed mb-10">
+        <p className="font-sans border-l-2 border-accent-300 pl-4 italic text-stone-600 text-sm leading-relaxed mb-10">
           {excerpt}
         </p>
       )}
@@ -111,16 +114,20 @@ function EscritoBody({ text, category, excerpt }) {
           )
         }
         if (block.type === 'heading') {
+          // Numeración automática de secciones para "paper" — Felipe no
+          // escribe el número en el Doc, se cuenta el orden real de
+          // aparición de los subtítulos detectados.
+          if (!isLibro) headingCount += 1
           return (
             <h2
               key={i}
               className={
                 isLibro
                   ? 'clear-both text-center text-xs font-semibold uppercase tracking-[0.2em] text-accent-700 mt-12 mb-6 first:mt-0'
-                  : 'clear-both text-left text-sm font-bold text-stone-900 mt-10 mb-4 first:mt-0'
+                  : 'clear-both font-sans text-left text-sm font-bold text-stone-900 mt-10 mb-4 first:mt-0'
               }
             >
-              {block.content}
+              {isLibro ? block.content : `${headingCount}. ${block.content}`}
             </h2>
           )
         }
@@ -160,6 +167,16 @@ export default function EscritoDetail() {
   }
 
   const { item, category } = found
+  const isLibro = category === 'literarios'
+  const CategoryIcon = isLibro ? BookOpen : FileText
+
+  // 200 palabras/min es la estimación estándar de velocidad de lectura —
+  // solo tiene sentido mostrarlo en "paper" (señal de rigor de un
+  // artículo), no en el poema. Cálculo directo (no hook): ya estamos
+  // después de los returns condicionales, así que un useMemo acá violaría
+  // las Rules of Hooks; el cálculo es barato, no necesita memoización.
+  const readingMinutes =
+    !isLibro && text ? Math.max(1, Math.round(text.trim().split(/\s+/).length / 200)) : null
 
   return (
     <div className="min-h-screen py-20 sm:py-28 px-4 sm:px-6">
@@ -171,18 +188,39 @@ export default function EscritoDetail() {
           <ArrowLeft size={14} /> Volver a Escritos
         </Link>
 
-        {/* "Hoja": superficie propia con textura de grano sutil, separada
-            del fondo de la página, para leer como un cuaderno/pliego en vez
-            de una página web genérica. */}
-        <div className="relative bg-surface border border-primary-900/10 rounded-xl shadow-card overflow-hidden px-6 py-12 sm:px-14 sm:py-16">
-          <GrainOverlay opacity={0.05} blend="multiply" />
+        {/* "Hoja": misma superficie base y misma técnica de sombra
+            ambiental (por capas, no shadow-card plano) para ambas
+            variantes — da sensación de página elevada físicamente sobre el
+            fondo. La diferencia entre libro y paper es solo textura/ícono/
+            barra de membrete, no el color de fondo ni el tipo de sombra
+            (un intento anterior con fondo distinto + gradiente de "lomo"
+            se veía como una mancha, no como profundidad real). */}
+        <div
+          className={
+            isLibro
+              ? 'relative bg-surface border border-primary-900/10 rounded-xl overflow-hidden px-6 py-12 sm:px-14 sm:py-16 shadow-[0_1px_2px_rgba(23,23,23,0.04),0_8px_24px_-4px_rgba(23,23,23,0.10),0_24px_48px_-12px_rgba(23,23,23,0.12)]'
+              : 'relative bg-surface border border-primary-900/10 rounded-lg overflow-hidden px-6 py-12 sm:px-14 sm:py-16 shadow-[0_1px_2px_rgba(23,23,23,0.04),0_8px_24px_-4px_rgba(23,23,23,0.10),0_24px_48px_-12px_rgba(23,23,23,0.12)]'
+          }
+        >
+          {isLibro ? (
+            <GrainOverlay opacity={0.05} blend="multiply" />
+          ) : (
+            <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-primary-700" />
+          )}
           <div className="relative text-center mb-10">
-            <span className="block text-xs font-semibold uppercase tracking-wide text-accent-700 mb-3">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-accent-700 mb-3">
+              <CategoryIcon size={14} />
               {ESCRITOS_CATEGORY_LABELS[category] ?? category}
             </span>
-            <h1 className="font-display text-3xl sm:text-4xl font-medium text-stone-900 leading-tight">
+            <h1 className="font-display text-3xl sm:text-5xl font-medium text-stone-900 leading-tight">
               {item.title}
             </h1>
+            {!isLibro && (
+              <p className="font-sans text-sm text-stone-500 mt-3">
+                Por Felipe Caro Díaz — Psicólogo Clínico
+                {readingMinutes && ` · ${readingMinutes} min de lectura`}
+              </p>
+            )}
           </div>
 
           <div className="relative">

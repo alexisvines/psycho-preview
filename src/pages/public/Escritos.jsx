@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { BookOpen, FileText, ArrowRight } from 'lucide-react'
 import { BentoGrid, BentoCard } from '@/components/ui/BentoGrid'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { CardContent } from '@/components/ui/Card'
@@ -29,31 +30,49 @@ export default function Escritos() {
   })
 
   const items = mergeEscritosContent(byCategory)[category]
+  const CategoryIcon = category === 'literarios' ? BookOpen : FileText
 
   return (
     <div className="min-h-screen py-20 sm:py-28">
       <motion.section className="max-w-6xl mx-auto px-4 sm:px-6" {...sectionReveal}>
-        <div className="mb-12">
-          <SectionHeading align="center">Escritos</SectionHeading>
-        </div>
+        {/* Header con fondo propio (gradiente sutil, no toda la sección):
+            agrupa título + selector como una unidad con presencia propia,
+            en vez de flotar sobre el mismo fondo plano de toda la página. */}
+        <div className="-mx-4 sm:-mx-6 px-4 sm:px-6 pt-4 pb-12 mb-4 border-b border-primary-900/10 bg-gradient-to-b from-primary-50/60 via-primary-50/20 to-transparent">
+          <div className="mb-12">
+            <SectionHeading label="Colección" align="center">Escritos</SectionHeading>
+            <p className="text-stone-600 mt-3 text-center">
+              Poesía y reflexiones clínicas, publicadas a medida que están listas.
+            </p>
+          </div>
 
-        {/* Category toggle: generado desde ESCRITOS_CATEGORY_LABELS, no
-            hardcodeado — agregar una categoría nueva en escritosContent.js
-            (ej. "cuentos") la hace aparecer acá solo con eso. */}
-        <div className="flex flex-wrap justify-center gap-4 mb-16">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-all ${
-                category === cat
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-primary-50 text-primary-700 hover:bg-primary-100'
-              }`}
-            >
-              {ESCRITOS_CATEGORY_LABELS[cat] ?? cat}
-            </button>
-          ))}
+          {/* Category toggle: generado desde ESCRITOS_CATEGORY_LABELS, no
+              hardcodeado — agregar una categoría nueva en escritosContent.js
+              (ej. "cuentos") la hace aparecer acá solo con eso. Segmented
+              control con "pill" deslizante compartiendo layoutId: Framer
+              Motion anima la transición de posición entre botones solo. */}
+          <div className="flex justify-center">
+            <div className="inline-flex bg-primary-50 rounded-xl p-1 gap-1">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCategory(cat)}
+                  className={`relative px-6 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                    category === cat ? 'text-white' : 'text-primary-700 hover:text-primary-800'
+                  }`}
+                >
+                  {category === cat && (
+                    <motion.div
+                      layoutId="escritos-tab-pill"
+                      className="absolute inset-0 bg-primary-600 rounded-lg"
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{ESCRITOS_CATEGORY_LABELS[cat] ?? cat}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Grid of articles: animate on mount (keyed by category) en vez de
@@ -75,7 +94,8 @@ export default function Escritos() {
               const card = (
                 <GlowCard className="h-full border-transparent hover:border-primary-200 transition-colors duration-300">
                   <CardContent className="p-7 h-full flex flex-col">
-                    <h3 className="font-display text-xl font-medium text-stone-900 mb-3">
+                    <h3 className="inline-flex items-center gap-2 font-display text-xl font-medium text-stone-900 mb-3">
+                      <CategoryIcon size={16} className="text-accent-600 shrink-0" />
                       {item.title}
                     </h3>
                     <p className="text-stone-600 text-sm leading-relaxed flex-1">
@@ -87,6 +107,11 @@ export default function Escritos() {
                           Próximamente
                         </span>
                       </div>
+                    )}
+                    {isReadable && (
+                      <span className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-primary-700">
+                        Leer <ArrowRight size={14} />
+                      </span>
                     )}
                   </CardContent>
                 </GlowCard>
