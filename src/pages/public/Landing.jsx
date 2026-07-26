@@ -685,7 +685,12 @@ export default function Landing() {
                           <Icon size={22} strokeWidth={1.75} />
                         </div>
                         <h3 className="font-display text-xl font-medium text-stone-900 mb-2">{service.name}</h3>
-                        <span className="text-xs font-semibold uppercase tracking-wide text-accent-700 mb-1 block">{service.price}</span>
+                        <span
+                          className="text-xs font-semibold uppercase tracking-wide text-accent-700 mb-1 block truncate"
+                          title={service.price}
+                        >
+                          {service.price}
+                        </span>
                         <p className="text-stone-600 text-sm leading-relaxed flex-1">{service.description}</p>
                         {/* En vez de abrir WhatsApp directo, guarda el motivo
                             y lleva al formulario de #contacto — así el

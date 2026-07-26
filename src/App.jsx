@@ -5,6 +5,7 @@ import { ToastProvider } from './components/ui/ToastContext'
 import PublicLayout from './components/PublicLayout'
 import Landing from './pages/public/Landing'
 import Escritos from './pages/public/Escritos'
+import EscritoDetail from './pages/public/EscritoDetail'
 import NotFound from './pages/public/NotFound'
 
 const queryClient = new QueryClient()
@@ -22,6 +23,7 @@ function App() {
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Landing />} />
                 <Route path="/escritos" element={<Escritos />} />
+                <Route path="/escritos/:slug" element={<EscritoDetail />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>

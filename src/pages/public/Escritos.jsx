@@ -1,18 +1,34 @@
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { BentoGrid, BentoCard } from '@/components/ui/BentoGrid'
 import { GlowCard } from '@/components/ui/GlowCard'
 import { CardContent } from '@/components/ui/Card'
 import { SectionHeading } from './components/SectionHeading'
 import { staggerContainer, staggerItem, sectionReveal } from '@/lib/motion'
-import { ESCRITOS_CONTENT, ESCRITOS_CATEGORY_LABELS } from './escritosContent'
+import { publicAPI } from '@/api/endpoints'
+import {
+  ESCRITOS_CONTENT,
+  ESCRITOS_CATEGORY_LABELS,
+  ESCRITOS_QUERY_KEY,
+  mergeEscritosContent,
+} from './escritosContent'
 
+// Categorías fijas por diseño (ver escritosContent.js): agregar una
+// categoría nueva sigue siendo un cambio de código acá, el Sheet solo
+// gestiona los items dentro de las categorías existentes.
 const CATEGORIES = Object.keys(ESCRITOS_CONTENT)
 
 export default function Escritos() {
   const [category, setCategory] = useState(CATEGORIES[0])
+  const { data: byCategory } = useQuery({
+    queryKey: ESCRITOS_QUERY_KEY,
+    queryFn: () => publicAPI.getEscritos(),
+    staleTime: 5 * 60 * 1000,
+  })
 
-  const items = ESCRITOS_CONTENT[category]
+  const items = mergeEscritosContent(byCategory)[category]
 
   return (
     <div className="min-h-screen py-20 sm:py-28">
@@ -54,34 +70,46 @@ export default function Escritos() {
           animate="animate"
         >
           <BentoGrid>
-            {items.map((item) => (
-              <BentoCard key={item.id}>
-                <motion.div
-                  variants={staggerItem}
-                  className="h-full"
-                  whileHover={{ y: -6, scale: 1.015, rotate: item.id % 2 === 0 ? -0.4 : 0.4 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                >
-                  <GlowCard className="h-full border-transparent hover:border-primary-200 transition-colors duration-300">
-                    <CardContent className="p-7 h-full flex flex-col">
-                      <h3 className="font-display text-xl font-medium text-stone-900 mb-3">
-                        {item.title}
-                      </h3>
-                      <p className="text-stone-600 text-sm leading-relaxed flex-1">
-                        {item.excerpt}
-                      </p>
-                      {item.comingSoon && (
-                        <div className="mt-6 inline-flex">
-                          <span className="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent-700 bg-accent-50 rounded-full">
-                            Próximamente
-                          </span>
-                        </div>
-                      )}
-                    </CardContent>
-                  </GlowCard>
-                </motion.div>
-              </BentoCard>
-            ))}
+            {items.map((item, i) => {
+              const isReadable = !item.comingSoon && !!item.docUrl
+              const card = (
+                <GlowCard className="h-full border-transparent hover:border-primary-200 transition-colors duration-300">
+                  <CardContent className="p-7 h-full flex flex-col">
+                    <h3 className="font-display text-xl font-medium text-stone-900 mb-3">
+                      {item.title}
+                    </h3>
+                    <p className="text-stone-600 text-sm leading-relaxed flex-1">
+                      {item.excerpt}
+                    </p>
+                    {item.comingSoon && (
+                      <div className="mt-6 inline-flex">
+                        <span className="px-3 py-1 text-xs font-semibold uppercase tracking-wide text-accent-700 bg-accent-50 rounded-full">
+                          Próximamente
+                        </span>
+                      </div>
+                    )}
+                  </CardContent>
+                </GlowCard>
+              )
+              return (
+                <BentoCard key={item.title}>
+                  <motion.div
+                    variants={staggerItem}
+                    className="h-full"
+                    whileHover={{ y: -6, scale: 1.015, rotate: i % 2 === 0 ? -0.4 : 0.4 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                  >
+                    {isReadable ? (
+                      <Link to={`/escritos/${item.slug}`} className="block h-full">
+                        {card}
+                      </Link>
+                    ) : (
+                      card
+                    )}
+                  </motion.div>
+                </BentoCard>
+              )
+            })}
           </BentoGrid>
         </motion.div>
       </motion.section>

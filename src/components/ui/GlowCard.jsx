@@ -22,7 +22,7 @@ export function GlowCard({ children, className = '', ...props }) {
       }
       transition={{ duration: 0.3, ease: 'easeOut' }}
     >
-      <Card hoverable className="relative" {...props}>
+      <Card hoverable className="relative h-full" {...props}>
         {children}
       </Card>
     </motion.div>

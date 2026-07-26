@@ -64,3 +64,45 @@ export const ESCRITOS_CONTENT = {
     },
   ],
 }
+
+// Query key para el useQuery de Escritos.jsx.
+export const ESCRITOS_QUERY_KEY = ['public-escritos']
+
+// Slug para la URL /escritos/:slug, derivado del título (no hay columna de
+// slug en el Sheet: pedirle a Felipe que mantenga un slug a mano por fila
+// es fricción extra que no vale la pena para ~6-10 escritos).
+function slugify(title) {
+  return title
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+}
+
+// Igual idea que mergeContentBlocks (fallbacks.js), pero por categoría en
+// vez de por sectionKey: si el Sheet trajo items para una categoría, esos
+// reemplazan por completo los placeholders locales de esa categoría; si no
+// trajo nada (Sheet vacío, sin filas de esa categoría, o fetch fallido),
+// esa categoría cae a ESCRITOS_CONTENT sin tocarla.
+export function mergeEscritosContent(byCategory) {
+  const merged = {}
+  for (const category of Object.keys(ESCRITOS_CONTENT)) {
+    const fetched = byCategory?.[category]
+    const items = fetched?.length > 0 ? fetched : ESCRITOS_CONTENT[category]
+    merged[category] = items.map((item) => ({ ...item, slug: slugify(item.title) }))
+  }
+  return merged
+}
+
+// Busca un escrito por slug entre todas las categorías de un objeto ya
+// mergeado (mergeEscritosContent) — usado por la página de detalle
+// /escritos/:slug, que no sabe a priori de qué categoría es el slug.
+export function findEscritoBySlug(mergedByCategory, slug) {
+  for (const category of Object.keys(mergedByCategory)) {
+    const item = mergedByCategory[category].find((i) => i.slug === slug)
+    if (item) return { item, category }
+  }
+  return null
+}
